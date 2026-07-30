@@ -35,12 +35,15 @@ spec rather than copied from either model.
   wall, and a thinner wall needs a longer run to avoid an unsupported ledge
 - Optional flush front wall, padding the scoop side out to the lip's inner face so a
   swept-out part meets no ledge on the way to the rim
+- Optional rail for a clip-on label card, just under the lip: a groove between two ribs,
+  plus a detent in each side groove that the notches on the card's edges snap onto. It
+  runs along the back and the two sides only as far as the card reaches, so it never
+  touches the scoop side and costs no usable volume elsewhere
 
 ## Not implemented yet
 
 - Magnet and screw holes
 - Dividers
-- Label tab
 
 ## Usage
 
@@ -72,6 +75,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `floor_thickness` | 1 | 0.4–5 | Thickness of the flat floor above the feet |
 | `scoop` | true | bool | Enable the front scoop fillet |
 | `scoop_flush` | true | bool | Pad the scoop-side wall out to the lip's inner face |
+| `label` | true | bool | Enable the clip-on label rail |
 | `split` | true | bool | Debug: cut the model open to inspect the cross-section |
 
 `scoop_radius` (default 10 mm) is currently in the hidden group; move it out of
@@ -81,6 +85,16 @@ A note on `wall_thickness`: it sets the side walls, and the same value is used a
 skin left inside the feet. Because the foot cavity is a single taper, that skin is
 thinner than `wall_thickness` where the taper passes closest to the outer surface —
 0.69 mm at the default of 1 mm. Raise `wall_thickness` if your nozzle needs more.
+
+## Label cards
+
+The rail does not come with a card — print one from the UltraLight Bins model linked
+below. The rail is dimensioned from that model's card, measured off the mesh, so the
+cards drop straight in: 2.0 mm groove depth against a card edge at 18.700, 1.0 mm groove
+against a 0.8 mm card, and a 0.1 mm detent against the card's 0.1 mm notches.
+
+Cards are per bin size. A card for a 1x1 will not span a 2x2 — take the one matching the
+footprint you are printing.
 
 ## Credits
 
