@@ -36,9 +36,10 @@ spec rather than copied from either model.
 - Optional flush front wall, padding the scoop side out to the lip's inner face so a
   swept-out part meets no ledge on the way to the rim
 - Optional rail for a clip-on label card, just under the lip: a groove between two ribs,
-  plus a detent in each side groove that the notches on the card's edges snap onto. It
-  runs along the back and the two sides only as far as the card reaches, so it never
-  touches the scoop side and costs no usable volume elsewhere
+  plus a detent in each side groove that the notches on the card's edges snap onto. The
+  groove and its shelf run forward as an open channel, while the upper rib stops where the
+  card ends — neither reaches the scoop side. The rib is chamfered at 45° underneath, so
+  nothing in the rail prints as an unsupported overhang
 
 ## Not implemented yet
 
@@ -74,9 +75,9 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `wall_thickness` | 1 | 0.4–5 | Side wall thickness |
 | `floor_thickness` | 1 | 0.4–5 | Thickness of the flat floor above the feet |
 | `scoop` | true | bool | Enable the front scoop fillet |
-| `scoop_flush` | true | bool | Pad the scoop-side wall out to the lip's inner face |
+| `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
 | `label` | true | bool | Enable the clip-on label rail |
-| `split` | true | bool | Debug: cut the model open to inspect the cross-section |
+| `split` | false | bool | Debug: cut the model open to inspect the cross-section |
 
 `scoop_radius` (default 10 mm) is currently in the hidden group; move it out of
 `/* [Hidden] */` to expose it in the Customizer.

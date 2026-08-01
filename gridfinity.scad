@@ -7,11 +7,11 @@ units_z = 3;   // [1:10]
 wall_thickness = 1;    // [0.4:0.1:5]
 floor_thickness = 1;   // [0.4:0.1:5]
 scoop = true;
-scoop_flush = true;
+scoop_flush = false;
 label = true;
 
 /* [Debug] */
-split=true;
+split=false;
 
 /* [Hidden] */
 grid_unit = 42;
@@ -34,10 +34,11 @@ foot_base_radius = 1.6 / 2;
 // (37.4 x 11.95 x 0.8 for 1x1): it drops into the groove and rests on the lower rib.
 rail_groove_depth = 2.0;
 rail_rib_depth    = 2.6;
-rail_rib_upper    = 0.7;
+rail_rib_upper    = 0.2;
 rail_groove       = 1.0;
-rail_rib_lower    = 0.5;
+rail_rib_lower    = 0.1;
 rail_length       = 11.95;   // how far the card reaches in from the back wall
+rail_open_length  = 24;      // how far the groove and its rib run, only the upper rib is short
 
 // detent in the side grooves that the notches on the card's edges snap onto
 rail_detent_depth  = 0.1;
@@ -187,14 +188,16 @@ module bin_scoop(nx, ny, nz) {
 // open front end: it rests on the lower rib and the upper rib holds it down. The rail
 // stops where the card ends, so it never reaches the scoop side.
 module bin_label_rail(nx, ny, nz) {
-  ramp_bot = rail_rib_depth - wall_thickness;    // 45 deg out to the wall face
-  ramp_top = rail_rib_depth - lip_top_chamfer;   // 45 deg out to the lip face
+  ramp_bot = rail_rib_depth - wall_thickness;      // 45 deg out to the wall face
+  ramp_top = rail_rib_depth - lip_top_chamfer;     // 45 deg out to the lip face
+  ramp_rib = rail_rib_depth - rail_groove_depth;   // 45 deg, so the rib is not an overhang
 
-  z0 = ramp_bot;
-  z1 = z0 + rail_rib_lower;
-  z2 = z1 + rail_groove;
-  z3 = z2 + rail_rib_upper;
-  h  = z3 + ramp_top;
+  z0  = ramp_bot;
+  z1  = z0 + rail_rib_lower;
+  z2  = z1 + rail_groove;
+  z2b = z2 + ramp_rib;
+  z3  = z2b + rail_rib_upper;
+  h   = z3 + ramp_top;
 
   base = body_top(nz) + lip_bottom_chamfer - h;
 
@@ -221,6 +224,13 @@ module bin_label_rail(nx, ny, nz) {
                           rail_groove, inset_r(rail_groove_depth));
 
             translate([0, 0, z2])
+              tapered_hull(
+                inset_x(nx, rail_groove_depth), inset_y(ny, rail_groove_depth), inset_r(rail_groove_depth),
+                inset_x(nx, rail_rib_depth),    inset_y(ny, rail_rib_depth),    inset_r(rail_rib_depth),
+                ramp_rib
+              );
+
+            translate([0, 0, z2b])
               rounded_box(inset_x(nx, rail_rib_depth), inset_y(ny, rail_rib_depth),
                           rail_rib_upper, inset_r(rail_rib_depth));
 
@@ -233,12 +243,19 @@ module bin_label_rail(nx, ny, nz) {
           }
         }
 
-      // the rail runs only as far as the card reaches, so never on the scoop side
+      // the groove runs forward as an open channel, only the upper rib stops at the card
       translate([-outer_x(nx)/2 - 1, -outer_y(ny)/2 - 1, base - 1])
         cube([
           outer_x(nx) + 2,
+          outer_y(ny) - rail_groove_depth - rail_open_length + 1,
+          z2 + 1
+        ]);
+
+      translate([-outer_x(nx)/2 - 1, -outer_y(ny)/2 - 1, base + z2])
+        cube([
+          outer_x(nx) + 2,
           outer_y(ny) - rail_groove_depth - rail_length + 1,
-          h + 2
+          h - z2 + 2
         ]);
     }
 
