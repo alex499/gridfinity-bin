@@ -3,19 +3,20 @@
 A parametric [Gridfinity](https://gridfinity.xyz/) bin generator written from scratch in
 OpenSCAD, with no external libraries.
 
-This project is a compilation of two existing Gridfinity bin designs — it takes the
-features of both and reimplements them as a single parametric model driven by the
+This project is a compilation of three existing Gridfinity bin designs — it takes the
+features of each and reimplements them as a single parametric model driven by the
 OpenSCAD Customizer:
 
 - [Gridfinity Bins medium size](https://www.printables.com/model/710839-gridfinity-bins-medium-size) by Plastic Flow
 - [Gridfinity UltraLight Bins – Modular Clip-On Label System](https://www.printables.com/model/1481418-gridfinity-ultra-light-bins-modular-clip-on-label) by Muad'Dib
+- [Gridfinity inserts with cover, divided in multiple ways](https://www.printables.com/model/665798) by mhejjas
 
 The geometry was matched against the published STLs by measuring their cross-sections,
 rather than by converting or editing the meshes. The scoop, for example, is a concave
 fillet of radius 10 mm, tangent to both the inner front wall and the cavity floor —
-numbers taken from the ultra-light bin's actual profile. Where the two sources disagree
+numbers taken from the ultra-light bin's actual profile. Where the sources disagree
 with the official Gridfinity dimensions, the spec wins: the stacking lip is built to
-spec rather than copied from either model.
+spec rather than copied from any of them.
 
 ## What is implemented
 
@@ -32,19 +33,29 @@ spec rather than copied from either model.
   inside the cavity, so its radius is never limited by wall or floor thickness
 - Stacking lip to spec (0.7 / 1.8 / 1.9 mm, 4.4 mm total). Its bottom chamfer is derived
   from the wall thickness instead of being hard-coded: the spec's 0.7 mm assumes a 1.2 mm
-  wall, and a thinner wall needs a longer run to avoid an unsupported ledge
+  wall, and a thinner wall needs a longer run to avoid an unsupported ledge. With a plate
+  under it that run starts lower still, so the same cone doubles as the slot's ceiling
 - Optional flush front wall, padding the scoop side out to the lip's inner face so a
   swept-out part meets no ledge on the way to the rim
-- Optional rail for a clip-on label card, just under the lip: a groove between two ribs,
-  plus a detent in each side groove that the notches on the card's edges snap onto. The
-  groove and its shelf run forward as an open channel, while the upper rib stops where the
-  card ends — neither reaches the scoop side. The rib is chamfered at 45° underneath, so
-  nothing in the rail prints as an unsupported overhang
+- A slot just under the lip that a closing plate slides into: the wall thickens 0.9 mm
+  through a 45° ramp and steps back, and the step is the ledge the plate rests on. Nothing
+  is built above it — the lip's own support cone is lowered onto the ceiling of the slot
+  and is what holds the plate down. A round pin sunk into each side wall stands 0.59 mm
+  proud of it, and the plate's edge snaps over it into a matching seat
+- Two plates use that slot, and the bin picks between them. Undivided, it is the 11.95 mm
+  clip-on label card. Divided, it is a **sliding lid** covering the whole bin, because a
+  lid is the only thing that keeps contents from crossing between cells. Same thickness,
+  same ledge, same detents; the lid adds a tab that fills the mouth and restores the piece
+  of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
+  downward-facing face at all
+- Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
+  from one another. They stop 0.2 mm below the ledge so the lid slides over them, and
+  carry nothing themselves — that is what moving to a lid buys.
+  See [docs/slot-profile.md](docs/slot-profile.md) for the measured sections
 
 ## Not implemented yet
 
 - Magnet and screw holes
-- Dividers
 
 ## Usage
 
@@ -76,7 +87,9 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `floor_thickness` | 1 | 0.4–5 | Thickness of the flat floor above the feet |
 | `scoop` | true | bool | Enable the front scoop fillet |
 | `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
-| `label` | true | bool | Enable the clip-on label rail |
+| `cover` | true | bool | Cut the slot for the closing plate |
+| `rows` | `[1,0,0,0]` | 0–6 each | Cells in each row, front row first; 0 drops the row |
+| `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |
 | `split` | false | bool | Debug: cut the model open to inspect the cross-section |
 
 `scoop_radius` (default 10 mm) is currently in the hidden group; move it out of
@@ -87,15 +100,40 @@ skin left inside the feet. Because the foot cavity is a single taper, that skin 
 thinner than `wall_thickness` where the taper passes closest to the outer surface —
 0.69 mm at the default of 1 mm. Raise `wall_thickness` if your nozzle needs more.
 
-## Label cards
+## Cards and lids
 
-The rail does not come with a card — print one from the UltraLight Bins model linked
-below. The rail is dimensioned from that model's card, measured off the mesh, so the
-cards drop straight in: 2.0 mm groove depth against a card edge at 18.700, 1.0 mm groove
-against a 0.8 mm card, and a 0.1 mm detent against the card's 0.1 mm notches.
+Both are generated by the same file, with the same `units_*` and `rows` you used for the
+bin:
 
-Cards are per bin size. A card for a 1x1 will not span a 2x2 — take the one matching the
-footprint you are printing.
+```sh
+openscad -o card.stl -D 'units_x=1' -D 'units_y=1' -D 'part="card"' gridfinity.scad
+openscad -o lid.stl  -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
+                     -D 'part="lid"' gridfinity.scad
+```
+
+An undivided bin takes the card; a divided one takes the lid. Both are per bin size — a
+card for a 1x1 will not span a 2x2 — and a lid is per bin size only, not per layout, since
+it covers everything regardless of how the cells are arranged.
+
+`part = "assembled"` puts the plate back where it sits in the bin and renders both. It picks
+the right plate for the layout on its own, and is for looking at rather than printing:
+
+```sh
+openscad -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
+         -D 'part="assembled"' gridfinity.scad
+```
+
+The slot's height came from the UltraLight Bins card, measured off the mesh. Its 2.0 mm
+groove depth did not: that model recesses the groove into the wall, and here the slot's
+floor is the wall face, so the plate spans the full opening. Nor did the 0.8 mm thickness —
+the plate is 1.0 mm, because the difference between it and the slot is exactly how far the
+plate can float before the lip's cone catches it. A 1x1 card therefore comes out
+39.1 x 11.95 x 1.0 rather than 37.4 x 11.95 x 0.8: more label area, and not interchangeable
+with that model's cards.
+
+The sliding lid, the free divider grid and the round detent come from [Gridfinity inserts
+with cover, divided in multiple ways](https://www.printables.com/model/665798) by mhejjas,
+measured the same way.
 
 ## Credits
 
@@ -108,16 +146,19 @@ footprint you are printing.
 - **Gridfinity UltraLight Bins – Modular Clip-On Label System** by **Muad'Dib** —
   licensed CC BY-NC-SA 4.0 —
   <https://www.printables.com/model/1481418-gridfinity-ultra-light-bins-modular-clip-on-label>
+- **Gridfinity 1 x 1 x 2 and 1 x 1 x 3 inserts with cover, divided in multiple ways** by
+  **mhejjas** — licensed CC BY 4.0 — <https://www.printables.com/model/665798>
+  (the sliding lid, the free divider grid and the round detent)
 
 ## License
 
 **CC BY-NC-SA 4.0** — [Attribution–NonCommercial–ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-This is not a free choice. One of the two source designs (UltraLight Bins by Muad'Dib)
+This is not a free choice. One of the three source designs (UltraLight Bins by Muad'Dib)
 is published under CC BY-NC-SA 4.0, whose ShareAlike term requires derivative works to
-carry the same license, and whose NonCommercial term forbids commercial use. The other
-source (CC BY 4.0) is compatible with being combined into that. So the combined result
-cannot be released under anything more permissive.
+carry the same license, and whose NonCommercial term forbids commercial use. The other two
+sources (both CC BY 4.0) are compatible with being combined into that. So the combined
+result cannot be released under anything more permissive.
 
 In practice this means:
 
