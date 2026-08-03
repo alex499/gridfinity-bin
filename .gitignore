@@ -6,10 +6,10 @@
 
 # Third-party reference material, used for measurements only.
 # Not ours to redistribute.
+reference/
 *.pdf
-GF_Bin_1x1_3u_label_nomag_01.stl
-original_vs_remix_1x1.webp
-spec_draft_willtree8.jpg
 
 # Local tool settings
 .claude/settings.local.json
+# Customizer presets, written by the OpenSCAD GUI next to the .scad
+gridfinity.json
