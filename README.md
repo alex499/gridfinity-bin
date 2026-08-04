@@ -1,7 +1,14 @@
+**English** · [Русский](README.ru.md)
+
 # gridfinity-bin
 
 A parametric [Gridfinity](https://gridfinity.xyz/) bin generator written from scratch in
 OpenSCAD, with no external libraries.
+
+![A 2x2x3 bin with a two-row cell grid, its lid slid halfway out](docs/img/lid-open.png)
+
+*A 2x2x3 bin with `rows = [2, 3, 0, 0]`, its lid halfway out. Every picture on this page is
+rendered from this file by [docs/render-images.sh](docs/render-images.sh).*
 
 This project is a compilation of three existing Gridfinity bin designs — it takes the
 features of each and reimplements them as a single parametric model driven by the
@@ -55,6 +62,11 @@ spec rather than copied from any of them.
   of its own, scooped the same way; it is clamped to the row depth.
   See [docs/slot-profile.md](docs/slot-profile.md) for the measured sections
 
+| | |
+|---|---|
+| ![The same divided bin with the lid off](docs/img/bin-divided.png) | ![An undivided 1x1x3 bin with its label card in the slot](docs/img/bin-card.png) |
+| Divided, lid off: two rows of two and three cells, each row scooped from the divider in front of it. The notch in the front wall is the mouth the lid slides through. | Undivided, so the same slot holds an 11.95 mm label card instead, and the front wall is left whole. |
+
 ## Not implemented yet
 
 - Magnet and screw holes
@@ -101,6 +113,12 @@ A note on `wall_thickness`: it sets the side walls, and the same value is used a
 skin left inside the feet. Because the foot cavity is a single taper, that skin is
 thinner than `wall_thickness` where the taper passes closest to the outer surface —
 0.69 mm at the default of 1 mm. Raise `wall_thickness` if your nozzle needs more.
+
+![A 1x1x3 bin cut open, showing the scoop, the slot and a detent](docs/img/section.png)
+
+*`split = true` cuts the model open. Visible here: the scoop sweeping up the front wall, the
+slot running around under the rim with its ledge, and one of the two detents — the small pin
+in the side wall that the plate snaps over.*
 
 ## Cards and lids
 
