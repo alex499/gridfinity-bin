@@ -50,7 +50,9 @@ spec rather than copied from any of them.
   downward-facing face at all
 - Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
   from one another. They stop 0.2 mm below the ledge so the lid slides over them, and
-  carry nothing themselves — that is what moving to a lid buys.
+  carry nothing themselves — that is what moving to a lid buys. The ones separating rows
+  carry the same scoop as the front wall on their back face, so every row is a little bin
+  of its own, scooped the same way; it is clamped to the row depth.
   See [docs/slot-profile.md](docs/slot-profile.md) for the measured sections
 
 ## Not implemented yet

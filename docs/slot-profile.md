@@ -154,6 +154,16 @@ Dividers stop 0.2 below the ledge, so the lid passes over them, and they carry n
 rail, no ledge, no chamfer. That is the whole point of moving to a lid — once nothing has to be
 held at the top of a cell, cells can be laid out freely.
 
+The ones that run across the bin, separating rows, carry a scoop on their back face: the same
+quarter round as the front wall's, `scoop_radius` = 10, tangent to the floor and to the divider.
+That makes every row a little bin of its own, scooped the same way — the front row gets it from
+the bin's own front wall, the rest from the divider in front of them.
+
+It is clamped to the row depth, so cutting a bin into many shallow rows does not ask for a
+scoop deeper than the row. The dividers that run down the bin get nothing, and neither do the
+walls: at a wall the cavity runs on into the hollow foot, and that is already a 4.75 mm taper
+reaching 2.91 mm in.
+
 `rows[i]` is how many cells row `i` is split into; rows run across X and are counted from the
 front, and a zero drops the row. Rows are equal in height, cells equal in width within their
 row, so `rows = [2, 3, 0, 0]` on a 1x1 gives a front row of two 19.25 cells and a back row of

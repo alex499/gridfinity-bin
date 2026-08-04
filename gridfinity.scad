@@ -304,6 +304,37 @@ module bin_grid(nx, ny, nz) {
   }
 }
 
+// The same scoop the front wall gets, repeated on the back face of every row divider, so
+// each row is a little bin of its own with its own scoop, pointing the same way. Only the
+// back face: the front of a row wants a wall to sweep against, not a ramp.
+//
+// Clamped to the row depth, or a shallow bin cut into many rows would try to scoop further
+// than the row is deep.
+module bin_row_scoops(nx, ny, nz) {
+  r = min(scoop_radius, row_h(ny));
+
+  intersection() {
+    bin_void(nx, ny, nz);
+
+    union() {
+      if (row_count() > 1)
+        for (i = [1 : row_count()-1]) {
+          face = row_y0(ny, i);   // the divider's back face, looking into the row behind it
+
+          // square in the corner minus a cylinder = concave quarter fillet, as the scoop
+          difference() {
+            translate([-inner_x(nx)/2 - 1, face, floor_z()])
+              cube([inner_x(nx) + 2, r, r]);
+
+            translate([-inner_x(nx)/2 - 2, face + r, floor_z() + r])
+              rotate([0, 90, 0])
+                cylinder(r = r, h = inner_x(nx) + 4);
+          }
+        }
+    }
+  }
+}
+
 // The mouth: the front wall, the front of the lip and both front corners, gone from the
 // ledge up. Cutting exactly corner_radius deep is what makes the opening full width —
 // both corner arcs end at outer_y/2 - corner_radius, whatever the wall thickness is.
@@ -452,6 +483,9 @@ module bin(nx, ny, nz) {
 
       if (divided())
         bin_grid(nx, ny, nz);
+
+      if (scoop && divided())
+        bin_row_scoops(nx, ny, nz);
 
       if (cover)
         bin_slot(nx, ny, nz);
