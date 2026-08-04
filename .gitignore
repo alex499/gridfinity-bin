@@ -1,0 +1,15 @@
+# Render output — generated from the .scad sources
+*.stl
+*.3mf
+*.amf
+*.dxf
+
+# Third-party reference material, used for measurements only.
+# Not ours to redistribute.
+reference/
+*.pdf
+
+# Local tool settings
+.claude/settings.local.json
+# Customizer presets, written by the OpenSCAD GUI next to the .scad
+gridfinity.json
