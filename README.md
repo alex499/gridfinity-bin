@@ -58,12 +58,12 @@ spec rather than copied from any of them.
 - `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
   be opened without pulling the whole lid off. Each piece slides into its own column through
   the same mouth and carries its slice of the tab. The divider under a seam becomes a rail
-  and holds the two pieces on it the way a wall holds their outer edges: a groove 0.8 mm deep
-  down either face, 45° flares in and out of it so neither overhang needs support, and a top
-  that comes out flush with the rim. The valley the upper flare would otherwise leave beside
-  the seam is filled by the lid: each piece runs a fin up under the cap at the same 45°, a
-  top face on a part printed flat, so it costs no overhang either. Only a divider running the
-  full depth of the bin can be cut on, which is why it takes a single row of cells
+  and holds the two pieces on it the way a wall holds their outer edges: 0.8 mm of ledge
+  under each edge, a cap 0.5 mm thick over it, and 45° flares into both so neither overhang
+  needs support. The cap tops out level with the lid rather than with the rim, and the edge
+  under it is chamfered on the same 45° to nest below it, so the closed lid is flat — nothing
+  of the rail stands above it. Only a divider running the full depth of the bin can be cut
+  on, which is why it takes a single row of cells
 - Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
   from one another. They stop 0.2 mm below the ledge so the lid slides over them, and carry
   nothing themselves unless a seam lands on them — that is what moving to a lid buys. The
