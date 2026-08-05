@@ -6,6 +6,8 @@ units_z = 3;   // [1:10]
 /* [Walls] */
 wall_thickness = 1;    // [0.4:0.1:5]
 floor_thickness = 1;   // [0.4:0.1:5]
+// fill the feet in instead of letting the cavity dip into them
+solid_foot = false;
 scoop = true;
 scoop_flush = false;
 cover = true;
@@ -90,7 +92,8 @@ function inner_r()   = inset_r(wall_thickness);
 
 // inner surfaces the scoop is tangent to
 function wall_y(ny)  = -inner_y(ny)/2;          // front wall, inner face
-function floor_z()   = -foot_height + wall_thickness;  // cavity floor, inside the foot
+// cavity floor: inside the foot, or on top of it once the foot is filled in
+function floor_z()   = solid_foot ? floor_thickness : -foot_height + wall_thickness;
 function scoop_wall()     = scoop_flush ? lip_top_chamfer : wall_thickness;
 function scoop_wall_y(ny) = -outer_y(ny)/2 + scoop_wall();
 
@@ -200,8 +203,9 @@ module bin_void(nx, ny, nz) {
         inner_r()
       );
 
-    translate([0, 0, -foot_height])
-      foot_grid(nx, ny) bin_foot_void(inset = wall_thickness);
+    if (!solid_foot)
+      translate([0, 0, -foot_height])
+        foot_grid(nx, ny) bin_foot_void(inset = wall_thickness);
   }
 }
 

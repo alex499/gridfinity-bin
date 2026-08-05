@@ -98,6 +98,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `units_z` | 3 | 1–10 | Высота бина в единицах 7 мм |
 | `wall_thickness` | 1 | 0.4–5 | Толщина боковых стенок |
 | `floor_thickness` | 1 | 0.4–5 | Толщина плоского пола над ножками |
+| `solid_foot` | false | bool | Заливать ножки целиком, вместо того чтобы каверна проваливалась в них |
 | `scoop` | true | bool | Включить переднюю галтель-scoop |
 | `scoop_flush` | false | bool | Подложить стенку со стороны scoop'а до внутренней грани бортика |
 | `cover` | true | bool | Вырезать паз под закрывающую пластину |

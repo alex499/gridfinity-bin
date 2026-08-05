@@ -99,6 +99,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `units_z` | 3 | 1–10 | Bin height in 7 mm units |
 | `wall_thickness` | 1 | 0.4–5 | Side wall thickness |
 | `floor_thickness` | 1 | 0.4–5 | Thickness of the flat floor above the feet |
+| `solid_foot` | false | bool | Fill the feet in instead of letting the cavity dip into them |
 | `scoop` | true | bool | Enable the front scoop fillet |
 | `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
 | `cover` | true | bool | Cut the slot for the closing plate |
