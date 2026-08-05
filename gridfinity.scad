@@ -23,6 +23,7 @@ part = "bin";      // [bin, card, lid, assembled]
 
 /* [Debug] */
 split=false;
+split_axis = "x";   // [x, y, xy]
 
 /* [Hidden] */
 grid_unit = 42;
@@ -651,8 +652,12 @@ if (split) {
   difference() {
     selected_part();
 
-    translate([-60,0,0]) cube(100, center=true);
-    //translate([0,-60,0]) cube(100, center=true);
+    // both of them and what is left is a quarter, cut open at the corner
+    if (split_axis != "y")
+      translate([-60,0,0]) cube(100, center=true);
+
+    if (split_axis != "x")
+      translate([0,-60,0]) cube(100, center=true);
   }
 } else {
   selected_part();

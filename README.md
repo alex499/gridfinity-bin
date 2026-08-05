@@ -116,6 +116,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `split_lid` | false | bool | Cut the lid into one piece per cell; takes a single row of cells |
 | `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |
 | `split` | false | bool | Debug: cut the model open to inspect the cross-section |
+| `split_axis` | x | x, y, xy | Debug: which plane the cut runs on; `xy` leaves a quarter |
 
 `scoop_radius` (default 10 mm) is currently in the hidden group; move it out of
 `/* [Hidden] */` to expose it in the Customizer.

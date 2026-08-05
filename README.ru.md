@@ -116,6 +116,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `split_lid` | false | bool | Резать крышку по куску на ячейку; нужен один ряд ячеек |
 | `part` | bin | bin, card, lid, assembled | Что рендерить; `assembled` показывает бин с пластиной на месте |
 | `split` | false | bool | Отладка: разрезать модель, чтобы посмотреть сечение |
+| `split_axis` | x | x, y, xy | Отладка: по какой плоскости резать; `xy` оставляет четверть |
 
 `scoop_radius` (по умолчанию 10 мм) пока лежит в скрытой группе; вынеси его из
 `/* [Hidden] */`, чтобы он появился в Customizer'е.
