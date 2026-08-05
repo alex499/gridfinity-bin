@@ -141,6 +141,12 @@ function ledge_w()     = divider_thickness + 2*lid_seat;   // the rail under the
 function rail_w()      = divider_thickness + 2*lid_cap;    // and the cap over them
 function groove_h()    = slot_height - lid_cap;
 
+// Every rail carries the same detent the walls do, one in each of its two grooves, so each
+// piece snaps over a pair of them just as the whole lid snaps over the pair in the walls.
+function rail_detent_x(nx, j, s) = divider_x(nx, 0, j)
+                                   + s*(divider_thickness/2 + slot_detent_proud
+                                        - slot_detent_radius);
+
 
 // a piece runs wall slot to groove, groove to groove, or groove to wall slot
 function piece_x0(nx, j) = j == 0 ? -outer_x(nx)
@@ -354,6 +360,12 @@ module bin_grid(nx, ny, nz) {
           translate([0, row_y0(ny, i) - t/2, 0])
             wall_seg(inner_x(nx) + 2, t, t, floor_z(), top - floor_z());
 
+      // the pins the pieces snap over, standing in the grooves like the walls' own
+      if (seamed())
+        for (j = [1 : row_n(0)-1], s = [-1, 1])
+          translate([rail_detent_x(nx, j, s), detent_y(ny), ledge_top(nz)])
+            cylinder(r = slot_detent_radius, h = groove_h());
+
       for (i = [0 : row_count()-1])
         if (row_n(i) > 1)
           for (j = [1 : row_n(i)-1])
@@ -541,6 +553,15 @@ module lid_piece(nx, ny, nz, j) {
       translate([divider_x(nx, 0, j+1), 0, 0])
         mirror([1, 0, 0])
           seam_chamfer(ny);
+
+    // seats for the rail pins, concentric with them and 0.05 wider so they drop in
+    if (j > 0)
+      translate([rail_detent_x(nx, j, 1), detent_y(ny), -1])
+        cylinder(r = slot_detent_radius + 0.05, h = plate_thickness + 2);
+
+    if (j < row_n(0)-1)
+      translate([rail_detent_x(nx, j+1, -1), detent_y(ny), -1])
+        cylinder(r = slot_detent_radius + 0.05, h = plate_thickness + 2);
   }
 }
 

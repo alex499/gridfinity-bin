@@ -62,8 +62,10 @@ spec rather than copied from any of them.
   under each edge, a cap 0.5 mm thick over it, and 45° flares into both so neither overhang
   needs support. The cap tops out level with the lid rather than with the rim, and the edge
   under it is chamfered on the same 45° to nest below it, so the closed lid is flat — nothing
-  of the rail stands above it. Only a divider running the full depth of the bin can be cut
-  on, which is why it takes a single row of cells
+  of the rail stands above it. The rail carries the same detent the walls do, one in each of
+  its two grooves, so every piece snaps over a pair of pins just as the whole lid snaps over
+  the pair in the walls. Only a divider running the full depth of the bin can be cut on,
+  which is why it takes a single row of cells
 - Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
   from one another. They stop 0.2 mm below the ledge so the lid slides over them, and carry
   nothing themselves unless a seam lands on them — that is what moving to a lid buys. The
