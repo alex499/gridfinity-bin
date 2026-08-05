@@ -55,9 +55,16 @@ spec rather than copied from any of them.
   same ledge, same detents; the lid adds a tab that fills the mouth and restores the piece
   of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
   downward-facing face at all
+- `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
+  be opened without pulling the whole lid off. Each piece slides into its own column through
+  the same mouth and carries its slice of the tab. The divider under a seam comes up level
+  with the ledge and flares out at 45° into a seat that carries 0.8 mm of each of the two,
+  and the pieces meet over it a gap apart, so the lid stays flush across the seam. Only a
+  divider running the full depth of the bin can be cut on, which is why it takes a single
+  row of cells
 - Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
-  from one another. They stop 0.2 mm below the ledge so the lid slides over them, and
-  carry nothing themselves — that is what moving to a lid buys. The ones separating rows
+  from one another. They stop 0.2 mm below the ledge so the lid slides over them, and carry
+  nothing themselves unless a seam lands on them — that is what moving to a lid buys. The ones separating rows
   carry the same scoop as the front wall on their back face, so every row is a little bin
   of its own, scooped the same way; it is clamped to the row depth.
   See [docs/slot-profile.md](docs/slot-profile.md) for the measured sections
@@ -104,6 +111,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
 | `cover` | true | bool | Cut the slot for the closing plate |
 | `rows` | `[1,0,0,0]` | 0–6 each | Cells in each row, front row first; 0 drops the row |
+| `split_lid` | false | bool | Cut the lid into one piece per cell; takes a single row of cells |
 | `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |
 | `split` | false | bool | Debug: cut the model open to inspect the cross-section |
 
@@ -133,8 +141,9 @@ openscad -o lid.stl  -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
 ```
 
 An undivided bin takes the card; a divided one takes the lid. Both are per bin size — a
-card for a 1x1 will not span a 2x2 — and a lid is per bin size only, not per layout, since
-it covers everything regardless of how the cells are arranged.
+card for a 1x1 will not span a 2x2 — and with `split_lid` the lid follows the layout too,
+coming out as one piece per cell. The pieces are already laid out, coplanar and a gap apart,
+so one render is the whole set.
 
 `part = "assembled"` puts the plate back where it sits in the bin and renders both. It picks
 the right plate for the layout on its own, and is for looking at rather than printing:
