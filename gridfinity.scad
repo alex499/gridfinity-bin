@@ -132,16 +132,25 @@ function divider_top(nz)  = ledge_top(nz) - 0.2;
 
 // A divider that runs the full depth of the bin lies along the way the lid slides, so the
 // lid can be cut on it: one piece per cell, each going into its own column on its own. The
-// divider comes up level with the ledge and flares out at 45 deg into a seat, and the two
-// pieces meet over it a gap apart, so the lid stays flush across the seam.
-function seamed()       = split_lid && cover && row_count() == 1 && row_n(0) > 1;
-function seam_flare()   = max(0, plate_gap/2 + lid_seat - divider_thickness/2);
+// divider becomes a rail and holds the two pieces meeting on it exactly the way a wall holds
+// their outer edges — a groove down either face, capped by a top that is flush with the rim.
+function seamed()      = split_lid && cover && row_count() == 1 && row_n(0) > 1;
+function rail_w()      = divider_thickness + 2*lid_seat;
+function rail_top(nz)  = min(body_top(nz), slot_top(nz) + lid_seat);
 
-// a piece runs wall slot to seam, seam to seam, or seam to wall slot
+// a piece runs wall slot to groove, groove to groove, or groove to wall slot
 function piece_x0(nx, j) = j == 0 ? -outer_x(nx)
-                                  : divider_x(nx, 0, j) + plate_gap/2;
+                                  : divider_x(nx, 0, j) + divider_thickness/2 + plate_gap/2;
 function piece_x1(nx, j) = j == row_n(0)-1 ? outer_x(nx)
-                                           : divider_x(nx, 0, j+1) - plate_gap/2;
+                                           : divider_x(nx, 0, j+1) - divider_thickness/2
+                                             - plate_gap/2;
+
+// In the mouth there is no rail — the cut took it away with the wall — so the tabs meet
+// there on the centreline and close the front face between them.
+function tab_x0(nx, j) = j == 0 ? -outer_x(nx) : divider_x(nx, 0, j) + plate_gap/2;
+function tab_x1(nx, j) = j == row_n(0)-1 ? outer_x(nx)
+                                         : divider_x(nx, 0, j+1) - plate_gap/2;
+function tab_back(ny)  = mouth_y(ny) - plate_gap/2;   // clear of the cap on the way in
 
 module rounded_rect_2d(size_x, size_y, r) {
   hull() {
@@ -312,16 +321,18 @@ module wall_seg(length, w0, w1, z0, h) {
   }
 }
 
-// The seat a seam lands on: plain wall, then a 45 deg flare that stops level with the ledge,
-// wide enough to carry lid_seat of each of the two pieces. Nothing above it, so the lid runs
-// over the seam unbroken and the flare is the only overhang, at 45 deg.
-module seam_seat(length, nz) {
+// A rail, bottom to top: plain wall, 45 deg flare out to the ledge, the groove itself, then
+// 45 deg out again to the rim. The flares are what keep both overhangs printable, and the
+// top one lands flush with the rim because slot_drop is exactly what it has to climb.
+module seam_rail(length, nz) {
   t = divider_thickness;
-  f = seam_flare();
+  w = rail_w();
 
   union() {
-    wall_seg(length, t, t, floor_z(), ledge_top(nz) - f - floor_z());
-    wall_seg(length, t, t + 2*f, ledge_top(nz) - f, f);
+    wall_seg(length, t, t, floor_z(), ledge_top(nz) - lid_seat - floor_z());
+    wall_seg(length, t, w, ledge_top(nz) - lid_seat, lid_seat);
+    wall_seg(length, t, t, ledge_top(nz), slot_height);
+    wall_seg(length, t, w, slot_top(nz), rail_top(nz) - slot_top(nz));
   }
 }
 
@@ -346,7 +357,7 @@ module bin_grid(nx, ny, nz) {
             translate([divider_x(nx, i, j), row_y0(ny, i) + row_h(ny)/2, 0])
               rotate([0, 0, 90])
                 if (seamed())
-                  seam_seat(row_h(ny) + 2, nz);
+                  seam_rail(row_h(ny) + 2, nz);
                 else
                   wall_seg(row_h(ny) + 2, t, t, floor_z(), top - floor_z());
     }
@@ -476,22 +487,57 @@ module plate(nx, ny, nz, depth, tab) {
     }
 }
 
+// The 45 deg valley left between a rail's cap and the lid is filled by the lid itself: a fin
+// running up under the cap at the same angle, so there is no open groove beside the seam. It
+// stops short of the back wall, where that wall's own cone comes down to meet it.
+module seam_fin(ny, run) {
+  y0 = mouth_y(ny);
+  y1 = inner_y(ny)/2 - lid_seat;
+
+  hull() {
+    translate([0, y0, plate_thickness - 0.01])
+      cube([run, y1 - y0, 0.01]);
+
+    translate([run - 0.01, y0, plate_thickness + run - 0.01])
+      cube([0.01, y1 - y0, 0.01]);
+  }
+}
+
 // One column's piece of the lid: the whole lid, kept only between its two seams. Each piece
 // slides into its own cell through the same mouth, and comes away with its slice of the tab
 // and, where it meets a side wall, that wall's detent seat.
 module lid_piece(nx, ny, nz, j) {
-  x0 = piece_x0(nx, j);
-  x1 = piece_x1(nx, j);
+  x0  = piece_x0(nx, j);
+  x1  = piece_x1(nx, j);
+  run = lid_seat - plate_gap/2;
 
-  intersection() {
-    plate(nx, ny, nz, lid_depth(ny), true);
+  union() {
+    intersection() {
+      plate(nx, ny, nz, lid_depth(ny), true);
 
-    translate([x0, -outer_y(ny), -1])
-      cube([
-        x1 - x0,
-        2*outer_y(ny),
-        body_top(nz) + lip_height - ledge_top(nz) + 2
-      ]);
+      h = body_top(nz) + lip_height - ledge_top(nz) + 2;
+
+      union() {
+        translate([x0, -outer_y(ny), -1])
+          cube([x1 - x0, 2*outer_y(ny), h]);
+
+        translate([tab_x0(nx, j), -outer_y(ny), -1])
+          cube([
+            tab_x1(nx, j) - tab_x0(nx, j),
+            tab_back(ny) + outer_y(ny),
+            h
+          ]);
+      }
+    }
+
+    if (j > 0)
+      translate([x0, 0, 0])
+        seam_fin(ny, run);
+
+    if (j < row_n(0)-1)
+      translate([x1, 0, 0])
+        mirror([1, 0, 0])
+          seam_fin(ny, run);
   }
 }
 
@@ -604,6 +650,7 @@ module selected_part() {
 if (split) {
   difference() {
     selected_part();
+
     translate([-60,0,0]) cube(100, center=true);
     //translate([0,-60,0]) cube(100, center=true);
   }

@@ -57,16 +57,18 @@ spec rather than copied from any of them.
   downward-facing face at all
 - `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
   be opened without pulling the whole lid off. Each piece slides into its own column through
-  the same mouth and carries its slice of the tab. The divider under a seam comes up level
-  with the ledge and flares out at 45° into a seat that carries 0.8 mm of each of the two,
-  and the pieces meet over it a gap apart, so the lid stays flush across the seam. Only a
-  divider running the full depth of the bin can be cut on, which is why it takes a single
-  row of cells
+  the same mouth and carries its slice of the tab. The divider under a seam becomes a rail
+  and holds the two pieces on it the way a wall holds their outer edges: a groove 0.8 mm deep
+  down either face, 45° flares in and out of it so neither overhang needs support, and a top
+  that comes out flush with the rim. The valley the upper flare would otherwise leave beside
+  the seam is filled by the lid: each piece runs a fin up under the cap at the same 45°, a
+  top face on a part printed flat, so it costs no overhang either. Only a divider running the
+  full depth of the bin can be cut on, which is why it takes a single row of cells
 - Dividers on a free grid: `rows` gives the number of cells per row, and rows can differ
   from one another. They stop 0.2 mm below the ledge so the lid slides over them, and carry
-  nothing themselves unless a seam lands on them — that is what moving to a lid buys. The ones separating rows
-  carry the same scoop as the front wall on their back face, so every row is a little bin
-  of its own, scooped the same way; it is clamped to the row depth.
+  nothing themselves unless a seam lands on them — that is what moving to a lid buys. The
+  ones separating rows carry the same scoop as the front wall on their back face, so every
+  row is a little bin of its own, scooped the same way; it is clamped to the row depth.
   See [docs/slot-profile.md](docs/slot-profile.md) for the measured sections
 
 | | |
