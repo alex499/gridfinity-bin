@@ -585,21 +585,28 @@ module bin_plate(nx, ny, nz) {
     plate(nx, ny, nz, card_length, false);
 }
 
-if (part == "card") {
-  plate(units_x, units_y, units_z, card_length, false);
-} else if (part == "lid") {
-  bin_lid(units_x, units_y, units_z);
-} else if (part == "assembled") {
-  // for looking at, not for printing: the plate put back where it sits in the bin
-  bin(units_x, units_y, units_z);
-  translate([0, 0, ledge_top(units_z)])
-    bin_plate(units_x, units_y, units_z);
-} else if (split) {
-  difference() {
+module selected_part() {
+  if (part == "card") {
+    plate(units_x, units_y, units_z, card_length, false);
+  } else if (part == "lid") {
+    bin_lid(units_x, units_y, units_z);
+  } else if (part == "assembled") {
+    // for looking at, not for printing: the plate put back where it sits in the bin
     bin(units_x, units_y, units_z);
+    translate([0, 0, ledge_top(units_z)])
+      bin_plate(units_x, units_y, units_z);
+  } else {
+    bin(units_x, units_y, units_z);
+  }
+}
+
+// the cut is the last thing that happens, so it works on whichever part was picked
+if (split) {
+  difference() {
+    selected_part();
     translate([-60,0,0]) cube(100, center=true);
     //translate([0,-60,0]) cube(100, center=true);
   }
 } else {
-  bin(units_x, units_y, units_z);
+  selected_part();
 }
