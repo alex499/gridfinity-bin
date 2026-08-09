@@ -20,6 +20,8 @@ split_lid = false;
 
 /* [Output] */
 part = "bin";      // [bin, card, lid, assembled]
+// how deep the label card runs in from the back wall, and how far the ledge follows it
+card_length = 15;   // [5:0.05:40]
 
 /* [Debug] */
 split=false;
@@ -42,10 +44,17 @@ foot_height = foot_bottom_chamfer + foot_vertical + foot_top_chamfer;
 foot_mid_radius  = 3.2 / 2;
 foot_base_radius = 1.6 / 2;
 
+// The plate: a card when it is short, a sliding lid when it runs the whole bin.
+plate_thickness = 1;
+plate_play      = 0.2;           // how far it floats in the slot before the lip's cone catches it
+plate_gap       = 0.4;           // its clearance in the slot, 0.2 a side
+lid_notch       = corner_radius; // depth of the mouth; see docs, this value is not free
+lid_cap         = 0.5;           // how much of a piece's edge a rail holds over it; also its thickness
+
 // Slot the closing plate sits in, just under the lip. The wall thickens by slot_ledge
 // through a 45 deg taper and then steps back, and the step is the ledge. See docs.
-slot_ledge  = 0.9;   // how far the ledge stands proud of the wall face
-slot_height = 1.0;   // the slot, floor to ceiling
+slot_ledge  = 1.2;   // how far the ledge stands proud of the face it grows out of, wall or rail
+slot_height = plate_thickness + plate_play;   // the slot, floor to ceiling
 slot_drop   = 0.8;   // ceiling of the slot below the rim; the one number setting plate height
 
 // Detents on the side walls that the plate's edges snap over: a round pin sunk into the
@@ -53,14 +62,6 @@ slot_drop   = 0.8;   // ceiling of the slot below the rim; the one number settin
 slot_detent_radius = 0.475;
 slot_detent_proud  = 0.59;   // how far it stands into the slot, more than its own radius
 slot_detent_offset = 3.05;   // its centre, measured in from the back wall
-
-// The plate: a card when it is short, a sliding lid when it runs the whole bin.
-plate_thickness = 1.0;   // 0.2 under the slot: that difference is the plate's play, keep it small
-plate_gap       = 0.4;           // its clearance in the slot, 0.2 a side
-card_length     = 11.95;         // the short plate, and how far the ledge runs for it
-lid_notch       = corner_radius; // depth of the mouth; see docs, this value is not free
-lid_seat        = 0.8;           // how much of a piece's edge the rail carries under it
-lid_cap         = 0.5;           // and how much it holds over it; also the cap's own thickness
 
 divider_thickness = wall_thickness;
 
@@ -99,7 +100,11 @@ function inner_r()   = inset_r(wall_thickness);
 function wall_y(ny)  = -inner_y(ny)/2;          // front wall, inner face
 // cavity floor: inside the foot, or on top of it once the foot is filled in
 function floor_z()   = solid_foot ? floor_thickness : -foot_height + wall_thickness;
-function scoop_wall()     = scoop_flush ? lip_top_chamfer : wall_thickness;
+// flush pads out to whatever stands furthest in above it: the lip's inner face, and the
+// slot's ledge too where a lid's slot wraps around the front wall
+function scoop_wall()     = !scoop_flush ? wall_thickness
+                          : max(lip_top_chamfer,
+                                cover && divided() ? ledge_depth() : 0);
 function scoop_wall_y(ny) = -outer_y(ny)/2 + scoop_wall();
 
 // The slot hangs from its ceiling, which is where the lip's cone starts: that cone is what
@@ -137,7 +142,7 @@ function divider_top(nz)  = ledge_top(nz) - 0.2;
 // divider becomes a rail and holds the two pieces meeting on it exactly the way a wall holds
 // their outer edges — a groove down either face, capped by a top that is flush with the rim.
 function seamed()      = split_lid && cover && row_count() == 1 && row_n(0) > 1;
-function ledge_w()     = divider_thickness + 2*lid_seat;   // the rail under the pieces
+function ledge_w()     = divider_thickness + 2*slot_ledge;   // the rail under the pieces
 function rail_w()      = divider_thickness + 2*lid_cap;    // and the cap over them
 function groove_h()    = slot_height - lid_cap;
 
@@ -245,8 +250,9 @@ module bin_void(nx, ny, nz) {
 }
 
 module bin_scoop(nx, ny, nz) {
-  // the pad must not reach into the slot, or it blocks the mouth a sliding lid comes in by
-  pad_top = cover ? ledge_top(nz) : body_top(nz) + lip_bottom_chamfer;
+  // only a lid has a mouth in this wall, and the pad must not reach into it; with a card
+  // there is nothing to block, so the pad runs on up to the lip
+  pad_top = cover && divided() ? ledge_top(nz) : body_top(nz) + lip_bottom_chamfer;
 
   intersection() {
     bin_void(nx, ny, nz);
@@ -338,8 +344,8 @@ module seam_rail(length, nz) {
   t = divider_thickness;
 
   union() {
-    wall_seg(length, t, t, floor_z(), ledge_top(nz) - lid_seat - floor_z());
-    wall_seg(length, t, ledge_w(), ledge_top(nz) - lid_seat, lid_seat);
+    wall_seg(length, t, t, floor_z(), ledge_bot(nz) - floor_z());
+    wall_seg(length, t, ledge_w(), ledge_bot(nz), slot_ledge);
     wall_seg(length, t, t, ledge_top(nz), groove_h());
     wall_seg(length, t, rail_w(), ledge_top(nz) + groove_h(), lid_cap);
   }

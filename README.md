@@ -44,13 +44,13 @@ spec rather than copied from any of them.
   under it that run starts lower still, so the same cone doubles as the slot's ceiling
 - Optional flush front wall, padding the scoop side out to the lip's inner face so a
   swept-out part meets no ledge on the way to the rim
-- A slot just under the lip that a closing plate slides into: the wall thickens 0.9 mm
+- A slot just under the lip that a closing plate slides into: the wall thickens 1.2 mm
   through a 45° ramp and steps back, and the step is the ledge the plate rests on. Nothing
   is built above it — the lip's own support cone is lowered onto the ceiling of the slot
   and is what holds the plate down. A round pin sunk into each side wall stands 0.59 mm
   proud of it, and the plate's edge snaps over it into a matching seat
-- Two plates use that slot, and the bin picks between them. Undivided, it is the 11.95 mm
-  clip-on label card. Divided, it is a **sliding lid** covering the whole bin, because a
+- Two plates use that slot, and the bin picks between them. Undivided, it is the clip-on
+  label card, 15 mm deep by default. Divided, it is a **sliding lid** covering the whole bin, because a
   lid is the only thing that keeps contents from crossing between cells. Same thickness,
   same ledge, same detents; the lid adds a tab that fills the mouth and restores the piece
   of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
@@ -58,7 +58,7 @@ spec rather than copied from any of them.
 - `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
   be opened without pulling the whole lid off. Each piece slides into its own column through
   the same mouth and carries its slice of the tab. The divider under a seam becomes a rail
-  and holds the two pieces on it the way a wall holds their outer edges: 0.8 mm of ledge
+  and holds the two pieces on it the way a wall holds their outer edges: 1.2 mm of ledge
   under each edge, a cap 0.5 mm thick over it, and 45° flares into both so neither overhang
   needs support. The cap tops out level with the lid rather than with the rim, and the edge
   under it is chamfered on the same 45° to nest below it, so the closed lid is flat — nothing
@@ -76,7 +76,7 @@ spec rather than copied from any of them.
 | | |
 |---|---|
 | ![The same divided bin with the lid off](docs/img/bin-divided.png) | ![An undivided 1x1x3 bin with its label card in the slot](docs/img/bin-card.png) |
-| Divided, lid off: two rows of two and three cells, each row scooped from the divider in front of it. The notch in the front wall is the mouth the lid slides through. | Undivided, so the same slot holds an 11.95 mm label card instead, and the front wall is left whole. |
+| Divided, lid off: two rows of two and three cells, each row scooped from the divider in front of it. The notch in the front wall is the mouth the lid slides through. | Undivided, so the same slot holds a label card instead, and the front wall is left whole. |
 
 ## Not implemented yet
 
@@ -117,6 +117,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `rows` | `[1,0,0,0]` | 0–6 each | Cells in each row, front row first; 0 drops the row |
 | `split_lid` | false | bool | Cut the lid into one piece per cell; takes a single row of cells |
 | `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |
+| `card_length` | 15 | 5–40 | How deep the label card runs in from the back wall; the ledge follows it |
 | `split` | false | bool | Debug: cut the model open to inspect the cross-section |
 | `split_axis` | x | x, y, xy | Debug: which plane the cut runs on; `xy` leaves a quarter |
 
@@ -158,13 +159,13 @@ openscad -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
          -D 'part="assembled"' gridfinity.scad
 ```
 
-The slot's height came from the UltraLight Bins card, measured off the mesh. Its 2.0 mm
-groove depth did not: that model recesses the groove into the wall, and here the slot's
-floor is the wall face, so the plate spans the full opening. Nor did the 0.8 mm thickness —
-the plate is 1.0 mm, because the difference between it and the slot is exactly how far the
-plate can float before the lip's cone catches it. A 1x1 card therefore comes out
-39.1 x 11.95 x 1.0 rather than 37.4 x 11.95 x 0.8: more label area, and not interchangeable
-with that model's cards.
+Nothing about the plate is copied from the UltraLight Bins card. That model recesses its
+groove 2.0 mm into the wall; here the slot's floor is the wall face, so the plate spans the
+full opening. Its plate is 0.8 mm thick; here it is 1.2, and the slot is not a measured
+number at all — it is `plate_thickness + plate_play`, so the plate always fits and the
+0.2 mm left over is exactly how far it can float before the lip's cone catches it. A 1x1
+card therefore comes out 39.1 x 15 x 1.2 rather than 37.4 x 11.95 x 0.8: more label area,
+and not interchangeable with that model's cards.
 
 The sliding lid, the free divider grid and the round detent come from [Gridfinity inserts
 with cover, divided in multiple ways](https://www.printables.com/model/665798) by mhejjas,
