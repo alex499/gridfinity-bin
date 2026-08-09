@@ -11,6 +11,8 @@ solid_foot = false;
 scoop = true;
 scoop_flush = false;
 cover = true;
+// which plate the slot is cut for; auto is a card until the bin is divided, then a lid
+closure = "auto";   // [auto, card, lid]
 
 /* [Dividers] */
 // cells in each row, front row first; 0 means the row is not there
@@ -103,8 +105,7 @@ function floor_z()   = solid_foot ? floor_thickness : -foot_height + wall_thickn
 // flush pads out to whatever stands furthest in above it: the lip's inner face, and the
 // slot's ledge too where a lid's slot wraps around the front wall
 function scoop_wall()     = !scoop_flush ? wall_thickness
-                          : max(lip_top_chamfer,
-                                cover && divided() ? ledge_depth() : 0);
+                          : max(lip_top_chamfer, lidded() ? ledge_depth() : 0);
 function scoop_wall_y(ny) = -outer_y(ny)/2 + scoop_wall();
 
 // The slot hangs from its ceiling, which is where the lip's cone starts: that cone is what
@@ -131,6 +132,10 @@ function row_n(i)        = len(row_list()) == 0 ? 1 : row_list()[i];
 function cell_total(i=0) = i >= row_count() ? 0 : row_n(i) + cell_total(i+1);
 function divided()       = cell_total() > 1;
 
+// which plate the slot is built for. Only a lid gets a mouth, a ledge round the whole
+// perimeter and a tab; a card gets a ledge card_length long and an unbroken front wall
+function lidded() = cover && (closure == "lid" || (closure == "auto" && divided()));
+
 function row_h(ny)        = (inner_y(ny) - (row_count()-1)*divider_thickness) / row_count();
 function row_y0(ny, i)    = -inner_y(ny)/2 + i * (row_h(ny) + divider_thickness);
 function cell_w(nx, i)    = (inner_x(nx) - (row_n(i)-1)*divider_thickness) / row_n(i);
@@ -141,7 +146,7 @@ function divider_top(nz)  = ledge_top(nz) - 0.2;
 // lid can be cut on it: one piece per cell, each going into its own column on its own. The
 // divider becomes a rail and holds the two pieces meeting on it exactly the way a wall holds
 // their outer edges — a groove down either face, capped by a top that is flush with the rim.
-function seamed()      = split_lid && cover && row_count() == 1 && row_n(0) > 1;
+function seamed()      = split_lid && lidded() && row_count() == 1 && row_n(0) > 1;
 function ledge_w()     = divider_thickness + 2*slot_ledge;   // the rail under the pieces
 function rail_w()      = divider_thickness + 2*lid_cap;    // and the cap over them
 function groove_h()    = slot_height - lid_cap;
@@ -252,7 +257,7 @@ module bin_void(nx, ny, nz) {
 module bin_scoop(nx, ny, nz) {
   // only a lid has a mouth in this wall, and the pad must not reach into it; with a card
   // there is nothing to block, so the pad runs on up to the lip
-  pad_top = cover && divided() ? ledge_top(nz) : body_top(nz) + lip_bottom_chamfer;
+  pad_top = lidded() ? ledge_top(nz) : body_top(nz) + lip_bottom_chamfer;
 
   intersection() {
     bin_void(nx, ny, nz);
@@ -310,7 +315,7 @@ module bin_slot(nx, ny, nz) {
           }
         }
 
-      if (!divided())
+      if (!lidded())
         translate([-outer_x(nx)/2 - 1, -outer_y(ny)/2 - 1, base - 1])
           cube([
             outer_x(nx) + 2,
@@ -646,16 +651,16 @@ module bin(nx, ny, nz) {
       bin_lip(nx, ny, nz);
     }
 
-    // a divided bin is closed by a sliding lid, which needs a mouth to come in by
-    if (cover && divided())
+    // a bin closed by a sliding lid needs a mouth for it to come in by
+    if (lidded())
       lid_notch_cut(nx, ny, nz);
   }
 }
 
 
-// the plate that closes this bin: a lid once it is divided, a card while it is not
+// the plate this bin's slot was cut for
 module bin_plate(nx, ny, nz) {
-  if (divided())
+  if (lidded())
     bin_lid(nx, ny, nz);
   else
     plate(nx, ny, nz, card_length, false);

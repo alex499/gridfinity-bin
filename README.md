@@ -49,12 +49,13 @@ spec rather than copied from any of them.
   is built above it — the lip's own support cone is lowered onto the ceiling of the slot
   and is what holds the plate down. A round pin sunk into each side wall stands 0.59 mm
   proud of it, and the plate's edge snaps over it into a matching seat
-- Two plates use that slot, and the bin picks between them. Undivided, it is the clip-on
-  label card, 15 mm deep by default. Divided, it is a **sliding lid** covering the whole bin, because a
-  lid is the only thing that keeps contents from crossing between cells. Same thickness,
-  same ledge, same detents; the lid adds a tab that fills the mouth and restores the piece
-  of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
-  downward-facing face at all
+- Two plates use that slot, and `closure` picks between them. One is the clip-on label card,
+  15 mm deep by default. The other is a **sliding lid** covering the whole bin. Same
+  thickness, same ledge, same detents; the lid adds a tab that fills the mouth and restores
+  the piece of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
+  downward-facing face at all. On `auto` the bin decides for itself — card while it is
+  undivided, lid once it is not, because a lid is the only thing that keeps contents from
+  crossing between cells — but either plate can be asked for outright
 - `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
   be opened without pulling the whole lid off. Each piece slides into its own column through
   the same mouth and carries its slice of the tab. The divider under a seam becomes a rail
@@ -114,6 +115,7 @@ openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinit
 | `scoop` | true | bool | Enable the front scoop fillet |
 | `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
 | `cover` | true | bool | Cut the slot for the closing plate |
+| `closure` | auto | auto, card, lid | Which plate the slot is cut for; `auto` is a card until the bin is divided, then a lid |
 | `rows` | `[1,0,0,0]` | 0–6 each | Cells in each row, front row first; 0 drops the row |
 | `split_lid` | false | bool | Cut the lid into one piece per cell; takes a single row of cells |
 | `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |
@@ -146,13 +148,13 @@ openscad -o lid.stl  -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
                      -D 'part="lid"' gridfinity.scad
 ```
 
-An undivided bin takes the card; a divided one takes the lid. Both are per bin size — a
-card for a 1x1 will not span a 2x2 — and with `split_lid` the lid follows the layout too,
-coming out as one piece per cell. The pieces are already laid out, coplanar and a gap apart,
-so one render is the whole set.
+Print whichever one the bin was built for — that is `closure`, and on `auto` it follows the
+layout. Both are per bin size — a card for a 1x1 will not span a 2x2 — and with `split_lid`
+the lid follows the layout too, coming out as one piece per cell. The pieces are already
+laid out, coplanar and a gap apart, so one render is the whole set.
 
 `part = "assembled"` puts the plate back where it sits in the bin and renders both. It picks
-the right plate for the layout on its own, and is for looking at rather than printing:
+whichever plate the slot was cut for, and is for looking at rather than printing:
 
 ```sh
 openscad -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
