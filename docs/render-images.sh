@@ -21,7 +21,7 @@ hero=$(mktemp -t hero-XXXX.scad)
 cat > "$hero" <<EOF
 include <$scad>
 units_x = 2; units_y = 2; units_z = 3;
-rows = [2, 3, 0, 0];
+cells = 4;
 part = "bin";
 translate([0, -52, ledge_top(units_z)]) bin_plate(units_x, units_y, units_z);
 EOF
@@ -30,7 +30,7 @@ render lid-open 0,0,8,58,0,25,0 "$hero"
 rm -f "$hero"
 
 render bin-divided 0,0,8,60,0,25,0 \
-  -D units_x=2 -D units_y=2 -D units_z=3 -D 'rows=[2,3,0,0]' "$scad"
+  -D units_x=2 -D units_y=2 -D units_z=3 -D cells=3 "$scad"
 
 render bin-card 0,0,8,55,0,20,0 \
   -D units_x=1 -D units_y=1 -D units_z=3 -D 'part="assembled"' "$scad"
