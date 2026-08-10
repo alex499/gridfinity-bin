@@ -47,8 +47,9 @@ spec rather than copied from any of them.
 - A slot just under the lip that a closing plate slides into: the wall thickens 1.2 mm
   through a 45° ramp and steps back, and the step is the ledge the plate rests on. Nothing
   is built above it — the lip's own support cone is lowered onto the ceiling of the slot
-  and is what holds the plate down. A round pin sunk into each side wall stands 0.59 mm
-  proud of it, and the plate's edge snaps over it into a matching seat
+  and is what holds the plate down. A round pin sunk into each side wall stands proud of it
+  and the plate's edge snaps over it into a matching seat — 0.59 mm under a lid, 0.9 mm
+  under a card, which is short and has nothing else gripping it
 - Two plates use that slot, and `closure` picks between them. One is the clip-on label card,
   15 mm deep by default. The other is a **sliding lid** covering the whole bin. Same
   thickness, same ledge, same detents; the lid adds a tab that fills the mouth and restores
@@ -163,11 +164,12 @@ openscad -D 'units_x=1' -D 'units_y=1' -D 'rows=[2,3,0,0]' \
 
 Nothing about the plate is copied from the UltraLight Bins card. That model recesses its
 groove 2.0 mm into the wall; here the slot's floor is the wall face, so the plate spans the
-full opening. Its plate is 0.8 mm thick; here it is 1.2, and the slot is not a measured
-number at all — it is `plate_thickness + plate_play`, so the plate always fits and the
-0.2 mm left over is exactly how far it can float before the lip's cone catches it. A 1x1
-card therefore comes out 39.1 x 15 x 1.2 rather than 37.4 x 11.95 x 0.8: more label area,
-and not interchangeable with that model's cards.
+full opening. Its plate is 0.8 mm thick; here it is 1.0, and the slot is not a measured
+number at all — it is `plate_thickness + plate_play`, so the plate always fits and whatever
+is left over is exactly how far it can float before the lip's cone catches it. That play is
+0 by default, so the slot is the plate. A 1x1 card therefore comes out 39.3 x 15 x 1.0
+rather than 37.4 x 11.95 x 0.8: more label area, and not interchangeable with that model's
+cards.
 
 The sliding lid, the free divider grid and the round detent come from [Gridfinity inserts
 with cover, divided in multiple ways](https://www.printables.com/model/665798) by mhejjas,

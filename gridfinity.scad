@@ -48,8 +48,8 @@ foot_base_radius = 1.6 / 2;
 
 // The plate: a card when it is short, a sliding lid when it runs the whole bin.
 plate_thickness = 1;
-plate_play      = 0.2;           // how far it floats in the slot before the lip's cone catches it
-plate_gap       = 0.4;           // its clearance in the slot, 0.2 a side
+plate_play      = 0;             // how far it floats in the slot before the lip's cone catches it
+plate_gap       = 0.2;           // its clearance in the slot, 0.1 a side
 lid_notch       = corner_radius; // depth of the mouth; see docs, this value is not free
 lid_cap         = 0.5;           // how much of a piece's edge a rail holds over it; also its thickness
 
@@ -63,6 +63,7 @@ slot_drop   = 0.8;   // ceiling of the slot below the rim; the one number settin
 // wall face, so what the plate meets is a curve rather than a corner.
 slot_detent_radius = 0.475;
 slot_detent_proud  = 0.59;   // how far it stands into the slot, more than its own radius
+card_detent_proud  = 0.9;    // a card is short and gripped by nothing else, so its catch is deeper
 slot_detent_offset = 3.05;   // its centre, measured in from the back wall
 
 divider_thickness = wall_thickness;
@@ -116,8 +117,9 @@ function ledge_bot(nz)  = ledge_top(nz) - slot_ledge;
 function ledge_depth()  = wall_thickness + slot_ledge;
 
 // centre of the detent pin: sunk into the wall face by the part of it that does not show
-function detent_x(nx) = inner_x(nx)/2 - slot_detent_proud + slot_detent_radius;
-function detent_y(ny) = inner_y(ny)/2 - slot_detent_offset;
+function detent_proud() = lidded() ? slot_detent_proud : card_detent_proud;
+function detent_x(nx)   = inner_x(nx)/2 - detent_proud() + slot_detent_radius;
+function detent_y(ny)   = inner_y(ny)/2 - slot_detent_offset;
 
 // the plate stops against the back wall; the lid runs on from there to the outer face
 function plate_back(ny) = inner_y(ny)/2 - plate_gap/2;
