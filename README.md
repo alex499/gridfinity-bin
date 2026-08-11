@@ -5,10 +5,16 @@
 A parametric [Gridfinity](https://gridfinity.xyz/) bin generator written from scratch in
 OpenSCAD, with no external libraries.
 
+**[Configure one in your browser →](https://alex499.github.io/gridfinity-bin/)** — no
+install, no account. The page runs this same `gridfinity.scad` through OpenSCAD compiled to
+WebAssembly, so the STL it hands you is the one the command line would produce.
+
 ![A 2x2x3 bin with a two-row cell grid, its lid slid halfway out](docs/img/lid-open.png)
 
-*A 2x2x3 bin with `cells = 4`, its lid halfway out. Every picture on this page is
-rendered from this file by [docs/render-images.sh](docs/render-images.sh).*
+*A 2x2x3 bin with `cells = 4`, its lid halfway out —
+[open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=2&units_y=2&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
+Every picture on this page is rendered from this file by
+[docs/render-images.sh](docs/render-images.sh).*
 
 This project is a compilation of three existing Gridfinity bin designs — it takes the
 features of each and reimplements them as a single parametric model driven by the
@@ -106,6 +112,35 @@ Override parameters without editing the file:
 ```sh
 openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinity.scad
 ```
+
+## The browser configurator
+
+[`web/`](web/) is a static page that renders this file in the browser: OpenSCAD itself,
+compiled to WebAssembly, driven by the same `-D` flags you would type. There is no server
+and nothing is uploaded — the model is fetched as plain text and rendered locally, taking
+about 0.4 s for a 2x2x3 bin and under 3 s for the largest one the sliders allow.
+
+The address bar always carries the whole configuration, so a link reproduces a bin exactly:
+copy it to send someone a design, or bookmark it and let the browser sync it to the machine
+next to the printer. Every parameter is written out rather than only the ones that differ
+from a default, so an old link cannot quietly change meaning when a default does.
+
+```sh
+cd web
+yarn install
+yarn serve      # builds _site/ and serves it on http://localhost:8080
+```
+
+`node verify.js` checks the page against the CLI: it drives the real worker, compares signed
+volume and bounding box for a spread of configurations, and sweeps every
+`cells` x `split_lid` x `closure` x `part` combination for a clean render. The sweep alone
+(`node verify.js sweep`) needs no OpenSCAD installed and is what CI runs before deploying.
+
+Editing `gridfinity.scad` needs no change here — the page reads it at run time. Only a *new*
+parameter needs a control adding to `web/index.html`.
+
+The page opens on a 1x1x3 bin. The defaults in the table below are the file's own, which is
+what the CLI gives you; the two are deliberately allowed to differ.
 
 ## Parameters
 

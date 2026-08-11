@@ -1,0 +1,16 @@
+{
+  "name": "gridfinity-bin-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser configurator for gridfinity.scad, running OpenSCAD itself as WebAssembly",
+  "license": "CC-BY-NC-SA-4.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "serve": "node build.js && node serve.js"
+  },
+  "dependencies": {
+    "openscad-wasm": "0.0.4",
+    "three": "^0.182.0"
+  }
+}

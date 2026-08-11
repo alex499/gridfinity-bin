@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gridfinity-bin — configurator</title>
+<meta name="description" content="Configure a parametric Gridfinity bin in the browser and download the STL. Runs OpenSCAD itself as WebAssembly — no server, no account.">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+
+<div id="app">
+
+  <aside id="panel">
+    <header>
+      <h1>gridfinity&#8209;bin</h1>
+      <p class="sub">A parametric Gridfinity bin, rendered here in your browser by OpenSCAD itself.</p>
+    </header>
+
+    <section class="group">
+      <h2>Size</h2>
+      <label class="row" for="units_x">
+        <span>Width</span>
+        <input type="range" id="units_x" data-param="int" min="1" max="10" step="1" value="1">
+        <output for="units_x">1</output>
+      </label>
+      <label class="row" for="units_y">
+        <span>Depth</span>
+        <input type="range" id="units_y" data-param="int" min="1" max="10" step="1" value="1">
+        <output for="units_y">1</output>
+      </label>
+      <label class="row" for="units_z">
+        <span>Height</span>
+        <input type="range" id="units_z" data-param="int" min="1" max="10" step="1" value="3">
+        <output for="units_z">3</output>
+      </label>
+      <p class="note" id="size-note"></p>
+    </section>
+
+    <section class="group">
+      <h2>Cells</h2>
+      <div class="cells" role="radiogroup" aria-label="Cell layout">
+        <label title="One cell">
+          <input type="radio" name="cells" value="1" checked>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34"/></svg>
+          <span>1</span>
+        </label>
+        <label title="Two side by side">
+          <input type="radio" name="cells" value="2">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="16" height="34"/><rect x="21" y="3" width="16" height="34"/></svg>
+          <span>2</span>
+        </label>
+        <label title="A row of two in front of a single one">
+          <input type="radio" name="cells" value="3">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="16"/><rect x="3" y="21" width="16" height="16"/><rect x="21" y="21" width="16" height="16"/></svg>
+          <span>3</span>
+        </label>
+        <label title="Two by two">
+          <input type="radio" name="cells" value="4">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="16" height="16"/><rect x="21" y="3" width="16" height="16"/><rect x="3" y="21" width="16" height="16"/><rect x="21" y="21" width="16" height="16"/></svg>
+          <span>4</span>
+        </label>
+      </div>
+      <p class="note">The front of the bin is at the bottom.</p>
+    </section>
+
+    <section class="group">
+      <h2>Closure</h2>
+      <label class="check"><input type="checkbox" id="cover" data-param="bool" checked> <span>Cut the slot for a plate</span></label>
+      <label class="row" for="closure">
+        <span>Plate</span>
+        <select id="closure" data-param="string">
+          <option value="auto" selected>Auto</option>
+          <option value="card">Label card</option>
+          <option value="lid">Sliding lid</option>
+        </select>
+        <output id="closure-resolved"></output>
+      </label>
+      <label class="check"><input type="checkbox" id="split_lid" data-param="bool"> <span>Split the lid, one piece per cell</span></label>
+    </section>
+
+    <section class="group">
+      <h2>Inside</h2>
+      <label class="check"><input type="checkbox" id="scoop" data-param="bool" checked> <span>Scoop the floor up to the outer wall</span></label>
+    </section>
+
+    <details class="group" id="advanced">
+      <summary>Advanced</summary>
+      <label class="row" for="wall_thickness">
+        <span>Wall</span>
+        <input type="range" id="wall_thickness" data-param="float" min="0.4" max="5" step="0.1" value="1">
+        <output for="wall_thickness">1.0</output>
+      </label>
+      <label class="row" for="floor_thickness">
+        <span>Floor</span>
+        <input type="range" id="floor_thickness" data-param="float" min="0.4" max="5" step="0.1" value="1">
+        <output for="floor_thickness">1.0</output>
+      </label>
+      <label class="row" for="card_length">
+        <span>Card depth</span>
+        <input type="range" id="card_length" data-param="float" min="5" max="40" step="0.05" value="15">
+        <output for="card_length">15.0</output>
+      </label>
+      <label class="check"><input type="checkbox" id="scoop_flush" data-param="bool"> <span>Pad the scoop wall flush to the lip</span></label>
+      <label class="check"><input type="checkbox" id="solid_foot" data-param="bool"> <span>Solid feet</span></label>
+    </details>
+
+    <footer>
+      <p>Model <a href="https://github.com/alex499/gridfinity-bin">gridfinity&#8209;bin</a>, CC&nbsp;BY&#8209;NC&#8209;SA&nbsp;4.0. Geometry by
+      <a href="https://openscad.org/">OpenSCAD</a> (GPL&#8209;2.0), compiled to WebAssembly.
+      <a href="https://gridfinity.xyz/">Gridfinity</a> is a system by Zack Freedman.</p>
+    </footer>
+  </aside>
+
+  <main id="stage">
+    <div id="viewer"></div>
+
+    <div id="view-toggle" role="radiogroup" aria-label="What to show">
+      <label><input type="radio" name="view" value="bin" checked> <span>Bin</span></label>
+      <label data-needs-cover><input type="radio" name="view" value="plate"> <span>Plate</span></label>
+      <label data-needs-cover><input type="radio" name="view" value="assembled"> <span>Assembled</span></label>
+    </div>
+
+    <div id="status" aria-live="polite"><span class="spinner"></span><span id="status-text">Starting…</span></div>
+
+    <div id="downloads">
+      <button type="button" id="dl-bin" disabled>Bin .stl</button>
+      <button type="button" id="dl-plate" disabled>Plate .stl</button>
+    </div>
+  </main>
+
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
