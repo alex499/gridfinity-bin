@@ -154,17 +154,17 @@ Dividers stop 0.2 below the ledge, so the lid passes over them, and they carry n
 rail, no ledge, no chamfer. That is the whole point of moving to a lid — once nothing has to be
 held at the top of a cell, cells can be laid out freely.
 
-The ones that run across the bin, separating rows, carry a scoop on their back face: the same
-quarter round as the front wall's, `scoop_radius` = 10, tangent to the floor and to the divider.
-That makes every row a little bin of its own, scooped the same way — the front row gets it from
-the bin's own front wall, the rest from the divider in front of them.
+Every row carries the front wall's scoop, grown from its own outer wall: the same quarter
+round, `scoop_radius` = 10, tangent to the floor and to that wall. The front row sweeps against
+the bin's front wall, the back row against the back wall — the same shape mirrored — so each row
+is a little bin of its own facing its own end, which is also the end its lid piece slides in by.
 
-It is clamped to the row depth, so cutting a bin into many shallow rows does not ask for a
-scoop deeper than the row. The dividers that run down the bin get nothing, and neither do the
-walls: at a wall the cavity runs on into the hollow foot, and that is already a 4.75 mm taper
-reaching 2.91 mm in.
+It is clamped to the row depth, so cutting a bin into shallow rows does not ask for a scoop
+deeper than the row. The dividers get nothing, and neither do the side walls: at a wall the
+cavity runs on into the hollow foot, and that is already a 4.75 mm taper reaching 2.91 mm in.
 
-`rows[i]` is how many cells row `i` is split into; rows run across X and are counted from the
-front, and a zero drops the row. Rows are equal in height, cells equal in width within their
-row, so `rows = [2, 3, 0, 0]` on a 1x1 gives a front row of two 19.25 cells and a back row of
-three 12.5 cells.
+`cells` is the whole layout as one number: 1 leaves the inside whole, 2 splits it side by
+side, 3 puts a row of two in front of a single cell, 4 is two by two. Rows run across X and
+are counted from the front, rows are equal in height and cells equal in width within their
+row, so `cells = 3` on a 1x1 gives a front row of two 19.25 cells and a back row of one
+39.5 cell, both 19.25 deep.

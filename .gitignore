@@ -9,6 +9,10 @@
 reference/
 *.pdf
 
+# Web configurator — dependencies and the assembled site, both rebuilt by `node build.js`
+web/node_modules/
+web/_site/
+
 # Local tool settings
 .claude/settings.local.json
 # Customizer presets, written by the OpenSCAD GUI next to the .scad
