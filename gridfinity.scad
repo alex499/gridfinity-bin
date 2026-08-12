@@ -104,10 +104,9 @@ function inner_r()   = inset_r(wall_thickness);
 function wall_y(ny)  = -inner_y(ny)/2;          // front wall, inner face
 // cavity floor: inside the foot, or on top of it once the foot is filled in
 function floor_z()   = solid_foot ? floor_thickness : -foot_height + wall_thickness;
-// flush pads out to whatever stands furthest in above it: the lip's inner face, and the
-// slot's ledge too where a lid's slot wraps around the front wall
-function scoop_wall()     = !scoop_flush ? wall_thickness
-                          : max(lip_top_chamfer, lidded() ? ledge_depth() : 0);
+// flush pads out to the lip's inner face, what stands furthest in above the scoop. A lid's
+// mouth takes the lip and the ledge with it, so there is nothing left to pad out to.
+function scoop_wall()     = !scoop_flush || lidded() ? wall_thickness : lip_top_chamfer;
 function scoop_wall_y(ny) = -outer_y(ny)/2 + scoop_wall();
 
 // The slot hangs from its ceiling, which is where the lip's cone starts: that cone is what
@@ -287,9 +286,8 @@ module bin_scoop(nx, ny, nz) {
 
 module row_scoop(nx, ny, nz) {
   r = min(scoop_radius, row_h(ny));
-  // only a lid has a mouth in this wall, and the pad must not reach into it; with a card
-  // there is nothing to block, so the pad runs on up to the lip
-  pad_top = lidded() ? ledge_top(nz) : body_top(nz) + lip_bottom_chamfer;
+  // the pad runs up to the lip, and only a card has one in this wall to run up to
+  pad_top = body_top(nz) + lip_bottom_chamfer;
 
   intersection() {
     bin_void(nx, ny, nz);
@@ -305,7 +303,7 @@ module row_scoop(nx, ny, nz) {
             cylinder(r = r, h = inner_x(nx) + 2, center = true);
       }
 
-      if (scoop_flush)
+      if (scoop_flush && !lidded())
         translate([-inner_x(nx)/2, wall_y(ny), floor_z()])
           cube([
             inner_x(nx),
@@ -316,9 +314,19 @@ module row_scoop(nx, ny, nz) {
   }
 }
 
+// The mouth ends the wall at the ledge, so the ledge there sits on the wall's cut top
+// holding nothing, and catches whatever is lifted out over it. Cut square along the ledge's
+// own inner face, so the side runs stay straight into the corner instead of curling round it.
+module ledge_mouth_cut(nx, ny, nz) {
+  w = inset_x(nx, ledge_depth());
+
+  translate([-w/2, -outer_y(ny)/2 - 1, ledge_bot(nz) - 1])
+    cube([w, wall_thickness + inner_r() + 1, slot_ledge + slot_height + 2]);
+}
+
 // Ledge the closing plate rests on, just under the lip. For a card it runs card_length in
-// from the back wall; for a lid it runs the whole perimeter. The lip's own cone is what
-// stops the plate lifting, so there is nothing to build above the slot.
+// from the back wall; for a lid it runs the whole perimeter but its mouths. The lip's own
+// cone is what stops the plate lifting, so there is nothing to build above the slot.
 module bin_slot(nx, ny, nz) {
   base = ledge_bot(nz);
   h    = slot_ledge + slot_height;
@@ -354,6 +362,15 @@ module bin_slot(nx, ny, nz) {
             outer_y(ny) - wall_thickness - card_length + 1,
             h + 2
           ]);
+
+      // a mouth in the wall takes the ledge with it, at whichever end the lid comes in
+      if (lidded()) {
+        ledge_mouth_cut(nx, ny, nz);
+
+        if (seamed() && two_rows())
+          mirror([0, 1, 0])
+            ledge_mouth_cut(nx, ny, nz);
+      }
     }
 
     // detents the plate snaps over, one on each side wall
