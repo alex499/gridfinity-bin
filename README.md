@@ -9,10 +9,10 @@ OpenSCAD, with no external libraries.
 install, no account. The page runs this same `gridfinity.scad` through OpenSCAD compiled to
 WebAssembly, so the STL it hands you is the one the command line would produce.
 
-![A 2x2x3 bin with a two-row cell grid, its lid slid halfway out](docs/img/lid-open.png)
+![A 1x1x3 bin with a two-by-two cell grid, its lid slid halfway out](docs/img/lid-open.png)
 
-*A 2x2x3 bin with `cells = 4`, its lid halfway out —
-[open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=2&units_y=2&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
+*A 1x1x3 bin with `cells = 4`, its lid halfway out —
+[open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
 Every picture on this page is rendered from this file by
 [docs/render-images.sh](docs/render-images.sh).*
 

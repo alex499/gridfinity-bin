@@ -10,10 +10,10 @@
 `gridfinity.scad` через OpenSCAD, собранный в WebAssembly, так что STL получается ровно
 тот же, что и из командной строки.
 
-![Бин 2x2x3 с сеткой из двух рядов, крышка выдвинута наполовину](docs/img/lid-open.png)
+![Бин 1x1x3 с сеткой два на два, крышка выдвинута наполовину](docs/img/lid-open.png)
 
-*Бин 2x2x3 с `cells = 4`, крышка выдвинута наполовину —
-[открыть его в конфигураторе](https://alex499.github.io/gridfinity-bin/#units_x=2&units_y=2&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
+*Бин 1x1x3 с `cells = 4`, крышка выдвинута наполовину —
+[открыть его в конфигураторе](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
 Все картинки на этой странице отрендерены из этого же файла скриптом
 [docs/render-images.sh](docs/render-images.sh).*
 
