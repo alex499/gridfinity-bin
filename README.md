@@ -14,7 +14,7 @@ WebAssembly, so the STL it hands you is the one the command line would produce.
 *A 1x1x3 bin with `cells = 4`, its lid halfway out —
 [open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
 Every picture on this page is rendered from this file by
-[docs/render-images.sh](docs/render-images.sh).*
+[scripts/render-images.sh](scripts/render-images.sh).*
 
 This project is a compilation of three existing Gridfinity bin designs — it takes the
 features of each and reimplements them as a single parametric model driven by the
@@ -111,6 +111,14 @@ Override parameters without editing the file:
 
 ```sh
 openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinity.scad
+```
+
+[`scripts/render-stl.sh`](scripts/render-stl.sh) renders a ready-to-print set into `stl/`:
+every `cells` and closure combination of the 1x1x3, with its cards and lids. The files are
+not in git — run the script after changing the model.
+
+```sh
+./scripts/render-stl.sh
 ```
 
 ## The browser configurator

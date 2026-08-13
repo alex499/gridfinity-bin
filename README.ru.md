@@ -15,7 +15,7 @@
 *Бин 1x1x3 с `cells = 4`, крышка выдвинута наполовину —
 [открыть его в конфигураторе](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
 Все картинки на этой странице отрендерены из этого же файла скриптом
-[docs/render-images.sh](docs/render-images.sh).*
+[scripts/render-images.sh](scripts/render-images.sh).*
 
 Проект собирает в себе три существующих модели Gridfinity — берёт особенности каждой и
 переделывает их в одну параметрическую модель, управляемую Customizer'ом OpenSCAD:
@@ -111,6 +111,14 @@ openscad -o bin.stl gridfinity.scad
 
 ```sh
 openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinity.scad
+```
+
+[`scripts/render-stl.sh`](scripts/render-stl.sh) собирает готовый к печати набор в `stl/`:
+все сочетания `cells` и закрытия для 1x1x3, с карточками и крышками. В git этих файлов
+нет — после правки модели скрипт нужно прогнать заново.
+
+```sh
+./scripts/render-stl.sh
 ```
 
 ## Конфигуратор в браузере
