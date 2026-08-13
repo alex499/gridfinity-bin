@@ -69,13 +69,13 @@
 
     <section class="group">
       <h2>Closure</h2>
-      <label class="check"><input type="checkbox" id="cover" data-param="bool" checked> <span>Cut the slot for a plate</span></label>
       <label class="row" for="closure">
         <span>Plate</span>
         <select id="closure" data-param="string">
           <option value="auto" selected>Auto</option>
           <option value="card">Label card</option>
           <option value="lid">Sliding lid</option>
+          <option value="none">None, leave it open</option>
         </select>
         <output id="closure-resolved"></output>
       </label>
@@ -120,8 +120,8 @@
 
     <div id="view-toggle" role="radiogroup" aria-label="What to show">
       <label><input type="radio" name="view" value="bin" checked> <span>Bin</span></label>
-      <label data-needs-cover><input type="radio" name="view" value="plate"> <span>Plate</span></label>
-      <label data-needs-cover><input type="radio" name="view" value="assembled"> <span>Assembled</span></label>
+      <label data-needs-plate><input type="radio" name="view" value="plate"> <span>Plate</span></label>
+      <label data-needs-plate><input type="radio" name="view" value="assembled"> <span>Assembled</span></label>
     </div>
 
     <div id="status" aria-live="polite"><span class="spinner"></span><span id="status-text">Starting…</span></div>

@@ -100,7 +100,7 @@ async function cli(params, dir) {
 /* the two checks */
 
 const base = { units_x: 2, units_y: 2, units_z: 3, cells: 1, split_lid: false,
-               closure: "auto", cover: true, scoop: true, part: "bin" };
+               closure: "auto", scoop: true, part: "bin" };
 
 const parityCases = [
   ["1x1x3 plain",            { units_x: 1, units_y: 1, units_z: 3 }],
@@ -109,7 +109,7 @@ const parityCases = [
   ["5x5x6 cells=2",          { units_x: 5, units_y: 5, units_z: 6, cells: 2 }],
   ["1x1x3 card",             { units_x: 1, units_y: 1, units_z: 3, part: "card" }],
   ["2x2x3 lid cells=4 split",{ cells: 4, split_lid: true, part: "lid" }],
-  ["2x2x2 no cover",         { units_z: 2, cover: false }],
+  ["2x2x2 open",             { units_z: 2, closure: "none" }],
   ["3x1x4 thick walls",      { units_x: 3, units_y: 1, units_z: 4, wall_thickness: 1.6,
                                floor_thickness: 2, solid_foot: true, scoop: false }],
 ];
@@ -145,7 +145,7 @@ async function sweep() {
   let n = 0, bad = 0;
   for (const cells of [1, 2, 3, 4])
     for (const split_lid of [false, true])
-      for (const closure of ["auto", "card", "lid"])
+      for (const closure of ["auto", "card", "lid", "none"])
         for (const part of ["bin", "card", "lid", "assembled"]) {
           const params = { ...base, cells, split_lid, closure, part };
           const msg = await render(params);
@@ -170,17 +170,16 @@ const testSchema = {
   units_z:        { kind: "int",    min: 1,   max: 10, fallback: 3 },
   wall_thickness: { kind: "float",  min: 0.4, max: 5,  fallback: 1 },
   card_length:    { kind: "float",  min: 5,   max: 40, fallback: 15 },
-  cover:          { kind: "bool",   fallback: true },
   split_lid:      { kind: "bool",   fallback: false },
   scoop:          { kind: "bool",   fallback: true },
-  closure:        { kind: "choice", values: ["auto", "card", "lid"], fallback: "auto" },
+  closure:        { kind: "choice", values: ["auto", "card", "lid", "none"], fallback: "auto" },
   cells:          { kind: "int",    min: 1,   max: 4,  fallback: 1 },
   view:           { kind: "choice", values: ["bin", "plate", "assembled"], fallback: "bin" },
 };
 
 const full = (over) => ({
   units_x: 1, units_y: 1, units_z: 3, wall_thickness: 1, card_length: 15,
-  cover: true, split_lid: false, scoop: true, closure: "auto", cells: 1, view: "bin", ...over,
+  split_lid: false, scoop: true, closure: "auto", cells: 1, view: "bin", ...over,
 });
 
 function config() {
@@ -192,7 +191,7 @@ function config() {
     ["a big split bin",full({ units_x: 7, units_y: 4, units_z: 9, cells: 4, split_lid: true,
                               closure: "lid", view: "assembled" })],
     ["fractions",      full({ wall_thickness: 1.6, card_length: 22.35, scoop: false })],
-    ["no cover",       full({ cover: false, closure: "card", view: "plate" })],
+    ["open bin",       full({ closure: "none" })],
   ];
   for (const [name, params] of trips) {
     const back = parse(serialise(params), testSchema);
@@ -209,6 +208,8 @@ function config() {
   // a fragment written against an older model, or by hand, or by a mangled paste
   const junk = [
     ["renamed key dropped",   "rows=2&units_x=3",        (p) => p.units_x === 3 && !("rows" in p)],
+    ["old cover=0 opens it",  "cover=0&closure=auto",    (p) => p.closure === "none"],
+    ["old cover=1 ignored",   "cover=1&closure=lid",     (p) => p.closure === "lid"],
     ["above range clamped",   "units_x=99",              (p) => p.units_x === 10],
     ["below range clamped",   "units_z=-5",              (p) => p.units_z === 1],
     ["float clamped",         "card_length=0.001",       (p) => p.card_length === 5],

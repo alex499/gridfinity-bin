@@ -16,7 +16,7 @@ render() {
 }
 
 for c in 1 2 3 4; do
-  render "bin-1x1x3-${c}cell-open"     -D cells=$c -D cover=false
+  render "bin-1x1x3-${c}cell-open"     -D cells=$c -D 'closure="none"'
   render "bin-1x1x3-${c}cell-for-card" -D cells=$c -D 'closure="card"'
   render "bin-1x1x3-${c}cell-for-lid"  -D cells=$c -D 'closure="lid"'
 done

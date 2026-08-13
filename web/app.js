@@ -289,7 +289,7 @@ const sizeNote = document.getElementById("size-note");
 function syncUI() {
   const params = readParams();
   const plate = resolvedClosure(params);
-  const covered = params.cover;
+  const covered = params.closure !== "none";   // covered() in gridfinity.scad
 
   for (const el of document.querySelectorAll("output[for]")) {
     const input = document.getElementById(el.htmlFor);
@@ -301,12 +301,11 @@ function syncUI() {
   const h = params.units_z * UNIT_HEIGHT + LIP_HEIGHT;
   sizeNote.textContent = `${w} × ${d} × ${h} mm`;
 
-  closureResolved.textContent = covered && params.closure === "auto" ? `→ ${plate}` : "";
-  document.getElementById("closure").disabled = !covered;
-  splitLid.disabled = !covered || plate !== "lid" || params.cells < 2;
+  closureResolved.textContent = params.closure === "auto" ? `→ ${plate}` : "";
+  splitLid.disabled = plate !== "lid" || params.cells < 2;
   if (splitLid.disabled) splitLid.checked = false;
 
-  for (const el of document.querySelectorAll("[data-needs-cover]")) el.hidden = !covered;
+  for (const el of document.querySelectorAll("[data-needs-plate]")) el.hidden = !covered;
   if (!covered && currentView() !== "bin") {
     document.querySelector('input[name="view"][value="bin"]').checked = true;
   }
