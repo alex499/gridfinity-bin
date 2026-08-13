@@ -12,9 +12,9 @@ WebAssembly, so the STL it hands you is the one the command line would produce.
 ![A 1x1x3 bin with a two-by-two cell grid, its lid slid halfway out](docs/img/lid-open.png)
 
 *A 1x1x3 bin with `cells = 4`, its lid halfway out —
-[open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&cover=1&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
+[open this one in the configurator](https://alex499.github.io/gridfinity-bin/#units_x=1&units_y=1&units_z=3&closure=auto&split_lid=0&scoop=1&wall_thickness=1&floor_thickness=1&card_length=15&scoop_flush=0&solid_foot=0&cells=4&view=bin).
 Every picture on this page is rendered from this file by
-[docs/render-images.sh](docs/render-images.sh).*
+[scripts/render-images.sh](scripts/render-images.sh).*
 
 This project is a compilation of three existing Gridfinity bin designs — it takes the
 features of each and reimplements them as a single parametric model driven by the
@@ -62,7 +62,8 @@ spec rather than copied from any of them.
   the piece of lip it cut away, so a closed bin still stacks. Printed flat, the lid has no
   downward-facing face at all. On `auto` the bin decides for itself — card while it is
   undivided, lid once it is not, because a lid is the only thing that keeps contents from
-  crossing between cells — but either plate can be asked for outright
+  crossing between cells — but either plate can be asked for outright, and `none` leaves
+  the bin open with no slot cut at all
 - `split_lid` cuts the lid on the dividers between cells, one piece per cell, so a cell can
   be opened without pulling the whole lid off. Each piece slides into its own column through
   the same mouth and carries its slice of the tab. The divider under a seam becomes a rail
@@ -113,6 +114,14 @@ Override parameters without editing the file:
 openscad -o bin_1x1x3.stl -D 'units_x=1' -D 'units_y=1' -D 'units_z=3' gridfinity.scad
 ```
 
+[`scripts/render-stl.sh`](scripts/render-stl.sh) renders a ready-to-print set into `stl/`:
+every `cells` and closure combination of the 1x1x3, with its cards and lids. The files are
+not in git — run the script after changing the model.
+
+```sh
+./scripts/render-stl.sh
+```
+
 ## The browser configurator
 
 [`web/`](web/) is a static page that renders this file in the browser: OpenSCAD itself,
@@ -153,8 +162,7 @@ what the CLI gives you; the two are deliberately allowed to differ.
 | `solid_foot` | false | bool | Fill the feet in instead of letting the cavity dip into them |
 | `scoop` | true | bool | Enable the front scoop fillet |
 | `scoop_flush` | false | bool | Pad the scoop-side wall out to the lip's inner face |
-| `cover` | true | bool | Cut the slot for the closing plate |
-| `closure` | auto | auto, card, lid | Which plate the slot is cut for; `auto` is a card until the bin is divided, then a lid |
+| `closure` | auto | auto, card, lid, none | Which plate the slot is cut for; `auto` is a card until the bin is divided, then a lid, and `none` leaves the bin open with no slot |
 | `cells` | 1 | 1–4 | Compartments the inside is split into; 2 side by side, 3 a row of two in front of one, 4 two by two |
 | `split_lid` | false | bool | Cut the lid into one piece per cell, each sliding in from its own end |
 | `part` | bin | bin, card, lid, assembled | Which piece to render; `assembled` shows the bin with its plate in place |

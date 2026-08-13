@@ -55,6 +55,38 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* the wordmark doubles as the reset: the arrow only turns up once there is
+   something to reset, which is also what tells you the title is a control */
+#reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#reset .mark span { color: var(--accent); }
+
+#reset svg {
+  flex: none;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+#reset[data-dirty] svg { opacity: 1; }
+#reset[data-dirty]:hover svg,
+#reset:focus-visible svg { color: var(--accent); opacity: 1; }
+#reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) { #reset svg { transition: none; } }
+
 .sub {
   margin: 6px 0 0;
   color: var(--muted);

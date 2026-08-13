@@ -10,9 +10,9 @@ floor_thickness = 1;   // [0.4:0.1:5]
 solid_foot = false;
 scoop = true;
 scoop_flush = false;
-cover = true;
-// which plate the slot is cut for; auto is a card until the bin is divided, then a lid
-closure = "auto";   // [auto, card, lid]
+// which plate the slot is cut for; auto is a card until the bin is divided, then a lid,
+// and none leaves the bin open with no slot at all
+closure = "auto";   // [auto, card, lid, none]
 
 /* [Dividers] */
 // how many cells to split the inside into: 2 side by side, 3 a row of two in front of a
@@ -141,15 +141,19 @@ function row_count() = len(row_list());
 function row_n(i)    = row_list()[i];
 function divided()   = cells > 1;
 
+// whether the bin is closed by anything at all; none leaves it open and skips the slot
+function covered() = closure != "none";
+
 // which plate the slot is built for. Only a lid gets a mouth, a ledge round the whole
 // perimeter and a tab; a card gets a ledge card_length long and an unbroken front wall
-function lidded() = cover && (closure == "lid" || (closure == "auto" && divided()));
+function lidded() = covered() && (closure == "lid" || (closure == "auto" && divided()));
 
 function row_h(ny)        = (inner_y(ny) - (row_count()-1)*divider_thickness) / row_count();
 function row_y0(ny, i)    = -inner_y(ny)/2 + i * (row_h(ny) + divider_thickness);
 function cell_w(nx, i)    = (inner_x(nx) - (row_n(i)-1)*divider_thickness) / row_n(i);
 function divider_x(nx, i, j) = -inner_x(nx)/2 + j*(cell_w(nx,i) + divider_thickness) - divider_thickness/2;
-function divider_top(nz)  = ledge_top(nz) - 0.2;
+// 0.2 clear of the plate sliding over it; with no plate it runs up to the top of the body
+function divider_top(nz)  = covered() ? ledge_top(nz) - 0.2 : body_top(nz);
 
 // A divider that runs the full depth of the bin lies along the way the lid slides, so the
 // lid can be cut on it: one piece per cell, each going into its own column on its own. The
@@ -635,7 +639,7 @@ module bin_lip(nx, ny, nz) {
   // With a plate under it the cone starts at the ceiling of the slot instead of where it
   // would naturally sit, so it is the ramp that holds the plate down.
   support = lip_support();
-  extra   = cover ? slot_drop : lip_extra();
+  extra   = covered() ? slot_drop : lip_extra();
 
   straight_top = extra + lip_bottom_chamfer + lip_vertical;
 
@@ -683,7 +687,7 @@ module bin(nx, ny, nz) {
       if (divided())
         bin_grid(nx, ny, nz);
 
-      if (cover)
+      if (covered())
         bin_slot(nx, ny, nz);
 
       bin_lip(nx, ny, nz);

@@ -35,6 +35,14 @@ export function parse(text, schema) {
   for (const [name, entry] of Object.entries(schema)) {
     params[name] = given.has(name) ? coerce(given.get(name), entry) : entry.fallback;
   }
+
+  // cover was a parameter of its own until closure grew a "none"; an old link that turned
+  // it off means an open bin, and must still open one
+  const cover = given.get("cover");
+  if ((cover === "0" || cover === "false") && schema.closure?.values?.includes("none")) {
+    params.closure = "none";
+  }
+
   return params;
 }
 

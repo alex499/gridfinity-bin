@@ -16,7 +16,16 @@
 
   <aside id="panel">
     <header>
-      <h1>gridfinity&#8209;bin</h1>
+      <h1>
+        <button type="button" id="reset" title="Reset every parameter to its default">
+          <span class="mark">gridfinity<span>&#8209;bin</span></span>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </h1>
       <p class="sub">A parametric Gridfinity bin, rendered here in your browser by OpenSCAD itself.</p>
     </header>
 
@@ -69,13 +78,13 @@
 
     <section class="group">
       <h2>Closure</h2>
-      <label class="check"><input type="checkbox" id="cover" data-param="bool" checked> <span>Cut the slot for a plate</span></label>
       <label class="row" for="closure">
         <span>Plate</span>
         <select id="closure" data-param="string">
           <option value="auto" selected>Auto</option>
           <option value="card">Label card</option>
           <option value="lid">Sliding lid</option>
+          <option value="none">None, leave it open</option>
         </select>
         <output id="closure-resolved"></output>
       </label>
@@ -120,8 +129,8 @@
 
     <div id="view-toggle" role="radiogroup" aria-label="What to show">
       <label><input type="radio" name="view" value="bin" checked> <span>Bin</span></label>
-      <label data-needs-cover><input type="radio" name="view" value="plate"> <span>Plate</span></label>
-      <label data-needs-cover><input type="radio" name="view" value="assembled"> <span>Assembled</span></label>
+      <label data-needs-plate><input type="radio" name="view" value="plate"> <span>Plate</span></label>
+      <label data-needs-plate><input type="radio" name="view" value="assembled"> <span>Assembled</span></label>
     </div>
 
     <div id="status" aria-live="polite"><span class="spinner"></span><span id="status-text">Starting…</span></div>

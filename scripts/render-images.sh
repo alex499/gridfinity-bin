@@ -4,7 +4,7 @@ set -e
 
 here=$(cd "$(dirname "$0")" && pwd)
 scad="$here/../gridfinity.scad"
-out="$here/img"
+out="$here/../docs/img"
 mkdir -p "$out"
 
 # Rendered at three times the final width and scaled down, which is the whole of the
