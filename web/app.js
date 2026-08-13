@@ -285,6 +285,10 @@ const dlPlate = document.getElementById("dl-plate");
 const splitLid = document.getElementById("split_lid");
 const closureResolved = document.getElementById("closure-resolved");
 const sizeNote = document.getElementById("size-note");
+const reset = document.getElementById("reset");
+
+// an empty fragment is the defaults, so this is the link the untouched page carries
+const defaultLink = serialise(parse("", schema()));
 
 function syncUI() {
   const params = readParams();
@@ -312,6 +316,8 @@ function syncUI() {
 
   dlPlate.textContent = plate === "lid" ? "Lid .stl" : "Card .stl";
   dlPlate.disabled = !covered;
+
+  reset.toggleAttribute("data-dirty", serialise(linkParams()) !== defaultLink);
 }
 
 let debounce = 0;
@@ -324,6 +330,7 @@ function onChange() {
 
 document.getElementById("panel").addEventListener("input", onChange);
 document.getElementById("view-toggle").addEventListener("change", onChange);
+reset.addEventListener("click", () => { applyParams(parse("", schema())); onChange(); });
 document.getElementById("dl-bin").addEventListener("click", () => requestDownload("bin"));
 dlPlate.addEventListener("click", () => requestDownload(resolvedClosure(readParams())));
 
