@@ -86,7 +86,7 @@ it and the plate goes with it.
 | ledge, top face | 14.45 |
 | plate | 14.45 → 15.45 |
 | ceiling of the slot | 15.45 |
-| top of the dividers | 14.25 |
+| top of the dividers | 14.25, or 16.25 with `closure = none` — nothing slides over them |
 | card | 39.1 × 11.95 × 1.0 |
 | lid, 1x1 | 41.49 × 40.3 × 6.2 |
 

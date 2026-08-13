@@ -152,7 +152,8 @@ function row_h(ny)        = (inner_y(ny) - (row_count()-1)*divider_thickness) / 
 function row_y0(ny, i)    = -inner_y(ny)/2 + i * (row_h(ny) + divider_thickness);
 function cell_w(nx, i)    = (inner_x(nx) - (row_n(i)-1)*divider_thickness) / row_n(i);
 function divider_x(nx, i, j) = -inner_x(nx)/2 + j*(cell_w(nx,i) + divider_thickness) - divider_thickness/2;
-function divider_top(nz)  = ledge_top(nz) - 0.2;
+// 0.2 clear of the plate sliding over it; with no plate it runs up to the top of the body
+function divider_top(nz)  = covered() ? ledge_top(nz) - 0.2 : body_top(nz);
 
 // A divider that runs the full depth of the bin lies along the way the lid slides, so the
 // lid can be cut on it: one piece per cell, each going into its own column on its own. The
